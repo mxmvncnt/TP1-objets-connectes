@@ -22,7 +22,7 @@ create table `historique` (
   `date` DATETIME not null,
   `video_id` INT not null,
   `lectures` INT not null,
-  `total_minutes` INT not null comment 'temps de lecture total en secondes',
+  `total_lecture` INT not null comment 'temps de lecture total en secondes',
   primary key (`id`),
   foreign key (`video_id`) references `video`(`id`)
 );
