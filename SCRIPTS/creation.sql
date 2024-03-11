@@ -1,5 +1,5 @@
 create table `video` (
-  `id` AUTOINCREMENT not null,
+  `id` INT not null AUTO_INCREMENT,
   `fichier` VARCHAR(1000) not null comment 'Nom du fichier',
   `taille` INT not null comment 'Taille du fichier en KB',
   `md5` varchar(32) not null,
@@ -8,7 +8,7 @@ create table `video` (
 )
 
 create table `lecture` (
-  `id` AUTOINCREMENT not null,
+  `id` INT not null AUTO_INCREMENT,
   `video_id` INT not null,
   `debut` DATETIME not null comment 'Quand la vidéo à commencé à être lue',
   `fin` DATETIME not null comment 'Quand la vidéo à fini dêtre lue',
@@ -18,7 +18,7 @@ create table `lecture` (
 );
 
 create table `historique` (
-  `id` AUTOINCREMENT not null,
+  `id` INT not null AUTO_INCREMENT,
   `date` DATETIME not null,
   `video_id` INT not null,
   `lectures` INT not null,
