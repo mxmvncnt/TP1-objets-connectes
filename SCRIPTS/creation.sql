@@ -1,17 +1,28 @@
-CREATE TABLE `video` (
-	`id` INT NOT NULL AUTO_INCREMENT,
-	`fichier` VARCHAR(1000) NOT NULL COMMENT 'Nom du fichier',
-	`taille` INT NOT NULL COMMENT 'taille de la video en KB',
-	`md5` VARCHAR(32) NOT NULL,
-	`ordre` INT COMMENT 'Ordre de lecture de la video',
-	PRIMARY KEY (`id`)
+create table `video` (
+  `id` AUTOINCREMENT not null,
+  `fichier` VARCHAR(1000) not null comment 'Nom du fichier',
+  `taille` INT not null comment 'Taille du fichier en KB',
+  `md5` varchar(32) not null,
+  `ordre` INT null comment 'Position dans lordre de la lecture',
+  primary key (`id`)
+)
+
+create table `lecture` (
+  `id` AUTOINCREMENT not null,
+  `video_id` INT not null,
+  `debut` DATETIME not null comment 'Quand la vidéo à commencé à être lue',
+  `fin` DATETIME not null comment 'Quand la vidéo à fini dêtre lue',
+  `temps_lecture` INT not null comment 'Durée totale de la lectuere en secondes',
+  primary key (`id`),
+  foreign key (`video_id`) references `video`(`id`)
 );
 
-CREATE TABLE `historique` (
-	`id` INT(20) NOT NULL AUTO_INCREMENT,
-	`video_id` INT(20) NOT NULL,
-	`debut` DATETIME(20) NOT NULL COMMENT 'Quand la video a commence a etre lue',
-	`fin` DATETIME(20) NOT NULL COMMENT 'Quand la video a fini de jouer',
-	`duree_lecture` INT(20) NOT NULL COMMENT 'Duree ed la lecture en secondes (fin - debut)',
-	PRIMARY KEY (`id`)
+create table `historique` (
+  `id` AUTOINCREMENT not null,
+  `date` DATETIME not null,
+  `video_id` INT not null,
+  `lectures` INT not null,
+  `total_minutes` INT not null comment 'temps de lecture total en secondes',
+  primary key (`id`),
+  foreign key (`video_id`) references `video`(`id`)
 );
