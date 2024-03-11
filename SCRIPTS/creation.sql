@@ -19,7 +19,7 @@ create table `lecture` (
 
 create table `historique` (
   `id` INT not null AUTO_INCREMENT,
-  `date` DATETIME not null,
+  `date` DATE not null,
   `video_id` INT not null,
   `lectures` INT not null,
   `total_lecture` INT not null comment 'temps de lecture total en secondes',
