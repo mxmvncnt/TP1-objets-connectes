@@ -3,6 +3,7 @@ import tkinter.font as tkFont
 
 class App:
     def __init__(self, root):
+        self.root = root
         #setting title
         root.title("undefined")
         #setting window size
@@ -118,7 +119,12 @@ class App:
     def GButton_910_command(self):
         print("command")
 
+def create_video_window():
+    new_window = tk.Toplevel(root)
+    new_window.geometry('500x500')
+
 if __name__ == "__main__":
     root = tk.Tk()
     app = App(root)
+    app.root.after(3000, create_video_window)
     root.mainloop()
