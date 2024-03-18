@@ -49,5 +49,8 @@ class Historique(BaseModel):
 
 
 def to_json(query_result):
-    result = [model_instance.json() for model_instance in query_result]
+    if isinstance(query_result, list):
+        result = [model_instance.json() for model_instance in query_result]
+    else:
+        result = query_result.json()
     return jsonify(result)
