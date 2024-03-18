@@ -5,7 +5,7 @@ create table `video` (
   `md5` varchar(32) not null,
   `ordre` INT null comment 'Position dans lordre de la lecture',
   primary key (`id`)
-)
+);
 
 create table `lecture` (
   `id` INT not null AUTO_INCREMENT,
