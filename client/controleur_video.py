@@ -1,11 +1,13 @@
 import tkinter as tk
 import tkinter.font as tkFont
 
+FONT_SIZE = 12
+
 class App:
     def __init__(self, root):
         self.root = root
         #setting title
-        root.title("undefined")
+        root.title("Lecteur de vidéos")
         #setting window size
         width=598
         height=468
@@ -15,109 +17,109 @@ class App:
         root.geometry(alignstr)
         root.resizable(width=False, height=False)
 
-        GLabel_868=tk.Label(root)
+        label_titre=tk.Label(root)
         ft = tkFont.Font(family='Times',size=16)
-        GLabel_868["font"] = ft
-        GLabel_868["fg"] = "#333333"
-        GLabel_868["justify"] = "center"
-        GLabel_868["text"] = "Contrôleur des vidéos"
-        GLabel_868.place(x=220,y=10,width=186,height=30)
+        label_titre["font"] = ft
+        label_titre["fg"] = "#333333"
+        label_titre["justify"] = "center"
+        label_titre["text"] = "Contrôleur des vidéos"
+        label_titre.place(x=220,y=10,width=186,height=30)
 
-        GLabel_703=tk.Label(root)
-        ft = tkFont.Font(family='Times',size=12)
-        GLabel_703["font"] = ft
-        GLabel_703["fg"] = "#333333"
-        GLabel_703["justify"] = "left"
-        GLabel_703["text"] = "Vidéo en cours :"
-        GLabel_703.place(x=40,y=50,width=105,height=30)
+        label_video_en_cours=tk.Label(root)
+        ft = tkFont.Font(family='Times',size=FONT_SIZE)
+        label_video_en_cours["font"] = ft
+        label_video_en_cours["fg"] = "#333333"
+        label_video_en_cours["justify"] = "left"
+        label_video_en_cours["text"] = "Vidéo en cours :"
+        label_video_en_cours.place(x=40,y=50,width=105,height=30)
 
-        GLabel_684=tk.Label(root)
-        ft = tkFont.Font(family='Times',size=12)
-        GLabel_684["font"] = ft
-        GLabel_684["fg"] = "#333333"
-        GLabel_684["justify"] = "left"
-        GLabel_684["text"] = "Nombre joué aujourd'hui :"
-        GLabel_684.place(x=40,y=100,width=174,height=30)
+        label_nombre_lectures=tk.Label(root)
+        ft = tkFont.Font(family='Times',size=FONT_SIZE)
+        label_nombre_lectures["font"] = ft
+        label_nombre_lectures["fg"] = "#333333"
+        label_nombre_lectures["justify"] = "left"
+        label_nombre_lectures["text"] = "Nombre joué aujourd'hui :"
+        label_nombre_lectures.place(x=40,y=100,width=174,height=30)
 
-        GLabel_132=tk.Label(root)
-        ft = tkFont.Font(family='Times',size=12)
-        GLabel_132["font"] = ft
-        GLabel_132["fg"] = "#333333"
-        GLabel_132["justify"] = "left"
-        GLabel_132["text"] = "Nombre total des vidéos joués aujourd'hui :"
-        GLabel_132.place(x=40,y=140,width=289,height=30)
+        label_nombre_total_videos_jouees=tk.Label(root)
+        ft = tkFont.Font(family='Times',size=FONT_SIZE)
+        label_nombre_total_videos_jouees["font"] = ft
+        label_nombre_total_videos_jouees["fg"] = "#333333"
+        label_nombre_total_videos_jouees["justify"] = "left"
+        label_nombre_total_videos_jouees["text"] = "Nombre total des vidéos joués aujourd'hui :"
+        label_nombre_total_videos_jouees.place(x=40,y=140,width=289,height=30)
 
-        GLabel_685=tk.Label(root)
-        ft = tkFont.Font(family='Times',size=12)
-        GLabel_685["font"] = ft
-        GLabel_685["fg"] = "#333333"
-        GLabel_685["justify"] = "left"
-        GLabel_685["text"] = "Temps joué aujourd'hui :"
-        GLabel_685["relief"] = "ridge"
-        GLabel_685.place(x=300,y=100,width=163,height=30)
+        label_temps_joue=tk.Label(root)
+        ft = tkFont.Font(family='Times',size=FONT_SIZE)
+        label_temps_joue["font"] = ft
+        label_temps_joue["fg"] = "#333333"
+        label_temps_joue["justify"] = "left"
+        label_temps_joue["text"] = "Temps joué aujourd'hui :"
+        label_temps_joue["relief"] = "ridge"
+        label_temps_joue.place(x=300,y=100,width=163,height=30)
 
-        GButton_282=tk.Button(root)
-        GButton_282["bg"] = "#c0c0c0"
+        bouton_localisation_arret=tk.Button(root)
+        bouton_localisation_arret["bg"] = "#c0c0c0"
         ft = tkFont.Font(family='Times',size=10)
-        GButton_282["font"] = ft
-        GButton_282["fg"] = "#000000"
-        GButton_282["justify"] = "center"
-        GButton_282["text"] = "Localisation / Arrêt"
-        GButton_282.place(x=130,y=190,width=129,height=36)
-        GButton_282["command"] = self.GButton_282_command
+        bouton_localisation_arret["font"] = ft
+        bouton_localisation_arret["fg"] = "#000000"
+        bouton_localisation_arret["justify"] = "center"
+        bouton_localisation_arret["text"] = "Localisation / Arrêt"
+        bouton_localisation_arret.place(x=130,y=190,width=129,height=36)
+        bouton_localisation_arret["command"] = self.bouton_localisation_arret_command
 
-        GButton_113=tk.Button(root)
-        GButton_113["bg"] = "#c0c0c0"
+        bouton_video_suivante=tk.Button(root)
+        bouton_video_suivante["bg"] = "#c0c0c0"
         ft = tkFont.Font(family='Times',size=10)
-        GButton_113["font"] = ft
-        GButton_113["fg"] = "#000000"
-        GButton_113["justify"] = "center"
-        GButton_113["text"] = "Passer à la vidéo suivante"
-        GButton_113.place(x=110,y=250,width=173,height=37)
-        GButton_113["command"] = self.GButton_113_command
+        bouton_video_suivante["font"] = ft
+        bouton_video_suivante["fg"] = "#000000"
+        bouton_video_suivante["justify"] = "center"
+        bouton_video_suivante["text"] = "Passer à la vidéo suivante"
+        bouton_video_suivante.place(x=110,y=250,width=173,height=37)
+        bouton_video_suivante["command"] = self.bouton_video_suivante_command
 
-        GButton_689=tk.Button(root)
-        GButton_689["bg"] = "#c0c0c0"
+        bouton_arreter_videos=tk.Button(root)
+        bouton_arreter_videos["bg"] = "#c0c0c0"
         ft = tkFont.Font(family='Times',size=10)
-        GButton_689["font"] = ft
-        GButton_689["fg"] = "#000000"
-        GButton_689["justify"] = "center"
-        GButton_689["text"] = "Arrêter les vidéos"
-        GButton_689.place(x=40,y=310,width=133,height=39)
-        GButton_689["command"] = self.GButton_689_command
+        bouton_arreter_videos["font"] = ft
+        bouton_arreter_videos["fg"] = "#000000"
+        bouton_arreter_videos["justify"] = "center"
+        bouton_arreter_videos["text"] = "Arrêter les vidéos"
+        bouton_arreter_videos.place(x=40,y=310,width=133,height=39)
+        bouton_arreter_videos["command"] = self.bouton_arreter_videos_command
 
-        GButton_910=tk.Button(root)
-        GButton_910["bg"] = "#c0c0c0"
+        bouton_demarrer_videos=tk.Button(root)
+        bouton_demarrer_videos["bg"] = "#c0c0c0"
         ft = tkFont.Font(family='Times',size=10)
-        GButton_910["font"] = ft
-        GButton_910["fg"] = "#000000"
-        GButton_910["justify"] = "center"
-        GButton_910["text"] = "Démarrer les vidéos"
-        GButton_910.place(x=190,y=310,width=168,height=38)
-        GButton_910["command"] = self.GButton_910_command
+        bouton_demarrer_videos["font"] = ft
+        bouton_demarrer_videos["fg"] = "#000000"
+        bouton_demarrer_videos["justify"] = "center"
+        bouton_demarrer_videos["text"] = "Démarrer les vidéos"
+        bouton_demarrer_videos.place(x=190,y=310,width=168,height=38)
+        bouton_demarrer_videos["command"] = self.bouton_demarrer_videos_command
 
-        GLabel_889=tk.Label(root)
-        ft = tkFont.Font(family='Times',size=12)
-        GLabel_889["font"] = ft
-        GLabel_889["fg"] = "#333333"
-        GLabel_889["justify"] = "left"
-        GLabel_889["text"] = "Mouvement détecté :"
-        GLabel_889.place(x=340,y=240,width=149,height=30)
+        label_mouvement_detecte=tk.Label(root)
+        ft = tkFont.Font(family='Times',size=FONT_SIZE)
+        label_mouvement_detecte["font"] = ft
+        label_mouvement_detecte["fg"] = "#333333"
+        label_mouvement_detecte["justify"] = "left"
+        label_mouvement_detecte["text"] = "Mouvement détecté :"
+        label_mouvement_detecte.place(x=340,y=240,width=149,height=30)
 
-    def GButton_282_command(self):
-        print("command")
-
-
-    def GButton_113_command(self):
-        print("command")
+    def bouton_localisation_arret_command(self):
+        print("localisation/arret clicked")
 
 
-    def GButton_689_command(self):
-        print("command")
+    def bouton_video_suivante_command(self):
+        print("video suivante clicked")
 
 
-    def GButton_910_command(self):
-        print("command")
+    def bouton_arreter_videos_command(self):
+        print("arreter videos clicked")
+
+
+    def bouton_demarrer_videos_command(self):
+        print("demarrer videos clicked")
 
 def create_video_window():
     new_window = tk.Toplevel(root)
@@ -126,5 +128,5 @@ def create_video_window():
 if __name__ == "__main__":
     root = tk.Tk()
     app = App(root)
-    app.root.after(3000, create_video_window)
+    app.root.after(30000, create_video_window)
     root.mainloop()
