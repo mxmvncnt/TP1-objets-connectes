@@ -49,6 +49,9 @@ class Historique(BaseModel):
 
 
 def to_json(query_result):
+    if (len(query_result) <= 0):
+        return jsonify({"message": "Aucun résultat trouvé"})
+
     if isinstance(query_result, list):
         result = [model_instance.json() for model_instance in query_result]
     else:
