@@ -311,3 +311,4 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/pycharm,visualstudiocode,python
 
 
+.DS_Store
