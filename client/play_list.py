@@ -7,6 +7,9 @@ class PlayList :
         self.videos = [] 
         self.videos = self.fetch_videos()
 
+    def videos_exist(self) -> bool:
+        return len(self.videos) != 0
+
     def fetch_videos(self) -> list:
         videos = []
         vids_folder = './client/videos'
