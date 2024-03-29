@@ -1,19 +1,15 @@
-import PySide6.QtWidgets as QtWidgets
 import vlc
-import sys
+from play_list import PlayList
+
+play_list = PlayList()
+videos = play_list.videos
 
 Instance = vlc.Instance()
 player = Instance.media_player_new()
-Media = Instance.media_new("beach.mp4")
+
+Media = Instance.media_new(videos[0].fichier)
 player.set_media(Media)
-
-vlcApp = QtWidgets.QApplication([])
-vlcWidget = QtWidgets.QFrame()
-vlcWidget.resize(800,800)
-vlcWidget.show()
-
-player.set_nsobject(vlcWidget.winId())
-    
 player.play()
 
-vlcApp.exec_()
+while True:
+    print(videos[0].fichier)

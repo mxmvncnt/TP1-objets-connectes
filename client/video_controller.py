@@ -3,7 +3,7 @@ import tkinter.font as tkFont
 
 FONT_SIZE = 12
 
-class App:
+class VideoController:
     def __init__(self, root):
         self.root = root
         #setting title
@@ -120,13 +120,3 @@ class App:
 
     def bouton_demarrer_videos_command(self):
         print("demarrer videos clicked")
-
-def create_video_window():
-    new_window = tk.Toplevel(root)
-    new_window.geometry('500x500')
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = App(root)
-    app.root.after(30000, create_video_window)
-    root.mainloop()
