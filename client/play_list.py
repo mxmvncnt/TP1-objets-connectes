@@ -12,8 +12,8 @@ class PlayList :
 
     def fetch_videos(self) -> list:
         videos = []
-        vids_folder = './client/videos'
-        extensions = ['.mp4', '.avi', '.mkv', '.mov', '.wmv', '.flv', '.mpeg']
+        vids_folder = f"{os.path.dirname(os.path.realpath(__file__))}/videos"
+        extensions = ['.mp4', '.avi', '.mkv', '.mov', '.wmv', '.flv', '.mpeg', '.webm']
         for file in os.listdir(vids_folder):
             file_path = os.path.join(vids_folder, file)
             if os.path.isfile(file_path):
