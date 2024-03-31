@@ -1,19 +1,21 @@
 import tkinter as tk
-from date_time import ClockApp
+import threading
 
+from date_time import ClockApp
 from video_controller import VideoController
 from play_list import PlayList
 
+playList = PlayList()
+
 def main() -> None:
-    playList = PlayList()
+    th_video_controller = threading.Thread(target=start_video_controller, args=())
+    th_clock = threading.Thread(target=start_clock, args=())
 
     if (playList.videos_exist()) :
-        start_video_controller()
+        th_video_controller.start()
     else:
-        start_clock()
-    
-    
-
+        th_clock.start()
+        th_clock.join()
 
 def start_clock():
     root = tk.Tk()
@@ -22,11 +24,10 @@ def start_clock():
 
 def start_video_controller():
     root = tk.Tk()
-    app = VideoController(root)
-    app.root.after(30000, create_video_window)
+    app = VideoController(root, playList)
     root.mainloop()
 
-def create_video_window():
+def create_video_window(root: tk.Tk):
     new_window = tk.Toplevel(root)
     new_window.geometry('500x500')
 

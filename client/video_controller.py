@@ -1,11 +1,18 @@
 import tkinter as tk
 import tkinter.font as tkFont
+import threading
+import time
+import settings as s
+
+from play_list import PlayList
+from video_display import VideoDisplay
 
 FONT_SIZE = 12
 
 
 class VideoController:
-    def __init__(self, root):
+    def __init__(self, root, play_list: PlayList):
+        self.play_list = play_list
         self.root = root
         # setting title
         root.title("Lecteur de vidéos")
@@ -106,6 +113,16 @@ class VideoController:
         label_mouvement_detecte["justify"] = "left"
         label_mouvement_detecte["text"] = "Mouvement détecté :"
         label_mouvement_detecte.place(x=340, y=240, width=149, height=30)
+
+        self.wait_for_seconds()
+        threading.Thread(target=self.startVideoPlayer, args=())
+
+    def startVideoPlayer(self):
+        videoDisplay = VideoDisplay()
+        videoDisplay.play()
+    
+    def wait_for_seconds(self):
+        time.sleep(s.WAIT_FOR_VIDEO_PLAYER)
 
     def bouton_localisation_arret_command(self):
         print("localisation/arret clicked")
