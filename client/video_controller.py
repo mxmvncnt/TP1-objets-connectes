@@ -16,6 +16,7 @@ class VideoController:
     def __init__(self, root: tk.Tk, play_list: PlayList):
         self.play_list = play_list
         self.current_video_name = self.play_list.current_video.fichier.split(f"{os.path.dirname(os.path.realpath(__file__))}/videos/")[1]
+        self.video_display = VideoDisplay.get_instance()
         
         self.root = root
         # setting title
@@ -135,6 +136,7 @@ class VideoController:
 
     def bouton_video_suivante_command(self):
         print("video suivante clicked")
+        self.video_display.play_next_video()
 
     def bouton_arreter_videos_command(self):
         print("arreter videos clicked")
