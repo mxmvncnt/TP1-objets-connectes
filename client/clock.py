@@ -3,7 +3,7 @@ import time
 from datetime import date
 
 class ClockApp:
-    def __init__(self, master):
+    def __init__(self, master: tk.Tk):
         self.master = master
         self.master.title("Date et heure")
 
@@ -13,6 +13,7 @@ class ClockApp:
         self.time_label.pack(padx=20, pady=40)
 
         self.update_date_and_time()
+        self.master.mainloop()
 
     def update_date_and_time(self):
         today = f'Date du jour : {date.today()}'

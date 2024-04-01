@@ -1,7 +1,7 @@
 import tkinter as tk
 import tkinter.font as tkFont
 import threading
-import time
+import os
 import settings as s
 
 from play_list import PlayList
@@ -11,8 +11,12 @@ FONT_SIZE = 12
 
 
 class VideoController:
-    def __init__(self, root, play_list: PlayList):
+    """ def __init__(self, root: tk.Tk, play_list: PlayList):
+        self.play_list = play_list """
+    def __init__(self, root: tk.Tk, play_list: PlayList):
         self.play_list = play_list
+        self.current_video_name = self.play_list.current_video.fichier.split(f"{os.path.dirname(os.path.realpath(__file__))}/videos/")[1]
+        
         self.root = root
         # setting title
         root.title("Lecteur de vidéos")
@@ -40,6 +44,14 @@ class VideoController:
         label_video_en_cours["justify"] = "left"
         label_video_en_cours["text"] = "Vidéo en cours :"
         label_video_en_cours.place(x=40, y=50, width=105, height=30)
+
+        label_nom_video_en_cours = tk.Label(root)
+        ft = tkFont.Font(family='Times', size=FONT_SIZE)
+        label_nom_video_en_cours["font"] = ft
+        label_nom_video_en_cours["fg"] = "#333333"
+        label_nom_video_en_cours["justify"] = "left"
+        label_nom_video_en_cours["text"] = f"{self.current_video_name}"
+        label_nom_video_en_cours.place(x=150, y=50, width=150, height=30)
 
         label_nombre_lectures = tk.Label(root)
         ft = tkFont.Font(family='Times', size=FONT_SIZE)
@@ -114,15 +126,9 @@ class VideoController:
         label_mouvement_detecte["text"] = "Mouvement détecté :"
         label_mouvement_detecte.place(x=340, y=240, width=149, height=30)
 
-        self.wait_for_seconds()
-        threading.Thread(target=self.startVideoPlayer, args=())
-
-    def startVideoPlayer(self):
-        videoDisplay = VideoDisplay()
-        videoDisplay.play()
-    
-    def wait_for_seconds(self):
-        time.sleep(s.WAIT_FOR_VIDEO_PLAYER)
+       
+        
+        self.root.mainloop()
 
     def bouton_localisation_arret_command(self):
         print("localisation/arret clicked")
