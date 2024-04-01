@@ -4,49 +4,61 @@ import vlc
 class VideoDisplay:
     _instance = None  # Variable de classe pour stocker l'instance unique de VideoDisplay
 
+    def __init__(self):
+        self.is_playing = None
+        self.media_list = None
+        self.player = None
+        self.media_player = None
+
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance.is_playing = False
-            cls._instance.media_player = None  # Garder une r�f�rence au lecteur de m�dias pour pouvoir contr�ler la lecture
+            cls._instance.media_player = None  # Garder une référence au lecteur de médias pour pouvoir contréler la lecture
             cls._instance.play_list = PlayList()
         return cls._instance
 
     def play(self):
         videos = self.play_list.videos
         
-        # Cr�ation d'un lecteur de liste de m�dias
+        # Création d'un lecteur de liste de médias
         self.media_player = vlc.MediaListPlayer() 
         
-        # Cr�ation d'une instance de classe
+        # Création d'une instance de classe
         self.player = vlc.Instance() 
         
-        # Cr�ation d'une nouvelle liste de m�dias
+        # Création d'une nouvelle liste de médias
         self.media_list = self.player.media_list_new()
         
-        # Ajout de m�dias � la liste de m�dias
+        # Ajout de médias é la liste de médias
         for video in videos:
             self.media_list.add_media(self.player.media_new(video.fichier))
 
-        # Configuration de la liste de m�dias sur le lecteur de m�dias
+        # Configuration de la liste de médias sur le lecteur de médias
         self.media_player.set_media_list(self.media_list) 
         
-        # Nouvelle instance de lecteur de m�dias
+        # Nouvelle instance de lecteur de médias
         new = self.player.media_player_new() 
         
-        # Configuration du lecteur de m�dias
+        # Configuration du lecteur de médias
         self.media_player.set_media_player(new) 
         
-        # D�marrage de la lecture
+        # Démarrage de la lecture
         self.media_player.play()
 
+        self.is_playing = True
+
     def play_next_video(self):
+        self.is_playing = True
         if self.media_player is not None:
-            self.media_player.next()  # Passer � la vid�o suivante dans la liste
+            self.media_player.next()  # Passer é la vidéo suivante dans la liste
             self.play_list.next_video()
+        else:
+            self.play()
 
     def stop_playing(self):
         if self.media_player is not None:
+            self.is_playing = False
             self.media_player.stop()
 
     @classmethod
