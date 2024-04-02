@@ -144,6 +144,8 @@ class VideoController:
         print("localisation/arret clicked")
 
     def bouton_video_suivante_command(self):
+        # TODO: Requete a l'API
+
         if self.video_display is not None:
             self.video_display.play_next_video()
         else:
@@ -151,6 +153,7 @@ class VideoController:
 
     def bouton_arreter_videos_command(self):
         if self.video_display is not None:
+            # TODO: Requete a l'API
             self.video_display.stop_playing()
             self.video_display = None
 
@@ -162,6 +165,10 @@ class VideoController:
         if wait:
             time.sleep(s.WAIT_FOR_VIDEO_PLAYER)
 
+        # TODO: Requete a l'API
+
         if self.video_display is None:
             self.video_display = VideoDisplay()
             self.video_display.play()
+
+    # TODO: Requete a l'API toutes les 5 secondes
