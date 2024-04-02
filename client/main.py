@@ -13,8 +13,8 @@ play_list = PlayList()
 def main():
     if play_list.videos_exist():
         th_video_controller.start()
-        th_video_controller.join()
         th_gpio.start()
+        th_video_controller.join()
         th_gpio.join()
     else:
         th_clock.start()

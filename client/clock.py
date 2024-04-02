@@ -7,6 +7,9 @@ class ClockApp:
         self.master = master
         self.master.title("Date et heure")
 
+        # Plein écran
+        self.master.attributes("-fullscreen", True)
+
         self.date_label = tk.Label(master, text="", font=("Helvetica", 40))
         self.date_label.pack(padx=20, pady=20)
         self.time_label = tk.Label(master, text="", font=("Helvetica", 38))
