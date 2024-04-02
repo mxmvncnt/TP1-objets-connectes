@@ -1,20 +1,17 @@
-import tkinter as tk
 import threading
-import time
-import settings as s
+import tkinter as tk
 
-from video_display import VideoDisplay
-from video_controller import VideoController
 from clock import ClockApp
 from play_list import PlayList
+from video_controller import VideoController
 
-playList = PlayList()
+play_list = PlayList()
 
 
-def main() -> None:
-    if playList.videos_exist():
+def main():
+    if play_list.videos_exist():
         th_video_controller.start()
-
+        th_video_controller.join()
     else:
         th_clock.start()
         th_clock.join()
@@ -25,7 +22,9 @@ def start_clock():
 
 
 def start_video_controller():
-    app = VideoController(tk.Tk(), playList)
+    root = tk.Tk()
+    VideoController(root, play_list)
+    root.mainloop()
 
 
 if __name__ == '__main__':

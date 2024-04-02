@@ -1,9 +1,9 @@
+import os
+import threading
 import time
 import tkinter as tk
 import tkinter.font as tkFont
-import threading
-import os
-import settings as s
+
 import settings as s
 from play_list import PlayList
 from video_display import VideoDisplay
@@ -16,13 +16,19 @@ class VideoController:
         self.play_list = play_list """
 
     def __init__(self, root: tk.Tk, play_list: PlayList):
-        self.play_list = play_list
-        self.current_video_name = \
-        self.play_list.current_video.fichier.split(f"{os.path.dirname(os.path.realpath(__file__))}/videos/")[1]
         self.video_display = None
-        self.create_gui(root)
 
-        self.start_video_player(True)
+        # Thread Affichage Video
+        self.th_video_display = threading.Thread(target=self.start_video_player, args=(True,))
+        self.th_video_display.start()
+
+        # Thread GUI
+        self.th_gui = threading.Thread(target=self.create_gui, args=(root,))
+        self.th_gui.start()
+
+        self.play_list = play_list
+        self.current_video_name = self.play_list.current_video.fichier.split(
+            f"{os.path.dirname(os.path.realpath(__file__))}/videos/")[1]
 
     def create_gui(self, root):
         self.root = root
@@ -134,13 +140,10 @@ class VideoController:
         label_mouvement_detecte["text"] = "Mouvement détecté :"
         label_mouvement_detecte.place(x=340, y=240, width=149, height=30)
 
-        self.root.mainloop()
-
     def bouton_localisation_arret_command(self):
         print("localisation/arret clicked")
 
     def bouton_video_suivante_command(self):
-        print("video suivante clicked")
         if self.video_display is not None:
             self.video_display.play_next_video()
         else:
@@ -150,19 +153,15 @@ class VideoController:
         if self.video_display is not None:
             self.video_display.stop_playing()
             self.video_display = None
-        print("arreter videos clicked")
 
     def bouton_demarrer_videos_command(self):
         if self.video_display is None:
             self.start_video_player(False)
 
     def start_video_player(self, wait):
-        print("asdadasdada")
         if wait:
-            print("waiting for video player...")
             time.sleep(s.WAIT_FOR_VIDEO_PLAYER)
 
         if self.video_display is None:
-            print('VideoPlay starting')
             self.video_display = VideoDisplay()
             self.video_display.play()
