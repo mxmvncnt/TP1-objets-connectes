@@ -42,6 +42,8 @@ class VideoDisplay:
         
         # Configuration du lecteur de médias
         self.media_player.set_media_player(new) 
+
+        self.media_player.get_media_player().set_fullscreen(True)
         
         # Démarrage de la lecture
         self.media_player.play()
