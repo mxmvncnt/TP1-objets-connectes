@@ -1,6 +1,7 @@
 from play_list import PlayList
 import vlc
 
+
 class VideoDisplay:
     _instance = None  # Variable de classe pour stocker l'instance unique de VideoDisplay
 
@@ -20,31 +21,31 @@ class VideoDisplay:
 
     def play(self):
         videos = self.play_list.videos
-        
+
         # Création d'un lecteur de liste de médias
-        self.media_player = vlc.MediaListPlayer() 
-        
+        self.media_player = vlc.MediaListPlayer()
+
         # Création d'une instance de classe
-        self.player = vlc.Instance() 
-        
+        self.player = vlc.Instance()
+
         # Création d'une nouvelle liste de médias
         self.media_list = self.player.media_list_new()
-        
+
         # Ajout de médias é la liste de médias
         for video in videos:
             self.media_list.add_media(self.player.media_new(video.fichier))
 
         # Configuration de la liste de médias sur le lecteur de médias
-        self.media_player.set_media_list(self.media_list) 
-        
+        self.media_player.set_media_list(self.media_list)
+
         # Nouvelle instance de lecteur de médias
-        new = self.player.media_player_new() 
-        
+        new = self.player.media_player_new()
+
         # Configuration du lecteur de médias
-        self.media_player.set_media_player(new) 
+        self.media_player.set_media_player(new)
 
         self.media_player.get_media_player().set_fullscreen(True)
-        
+
         # Démarrage de la lecture
         self.media_player.play()
 

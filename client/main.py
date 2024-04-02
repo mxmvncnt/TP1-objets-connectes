@@ -1,10 +1,9 @@
 import threading
-from sensor import Sensor
-import settings as s
 import tkinter as tk
 
 from clock import ClockApp
 from play_list import PlayList
+from sensor import Sensor
 from video_controller import VideoController
 
 play_list = PlayList()
@@ -24,8 +23,10 @@ def main():
 def start_clock():
     app = ClockApp(tk.Tk())
 
+
 def start_gpio():
     sensor = Sensor()
+
 
 def start_video_controller():
     root = tk.Tk()
