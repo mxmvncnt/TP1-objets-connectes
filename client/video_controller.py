@@ -5,7 +5,7 @@ import tkinter as tk
 import tkinter.font as tkFont
 
 import settings as s
-from client.video import Video
+from video import Video
 from play_list import PlayList
 from video_display import VideoDisplay
 
