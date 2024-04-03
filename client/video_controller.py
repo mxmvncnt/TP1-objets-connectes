@@ -8,6 +8,7 @@ import settings as s
 from video import Video
 from play_list import PlayList
 from video_display import VideoDisplay
+from sensor import Sensor
 
 FONT_SIZE = 12
 
@@ -15,6 +16,7 @@ FONT_SIZE = 12
 class VideoController:
     def __init__(self, root: tk.Tk, play_list: PlayList):
         self.video_display = None
+        self.sensor = Sensor(on_motion_callback=self.skip)
 
         self.play_list = play_list
         self.current_video: Video = self.play_list.current_video
@@ -26,6 +28,10 @@ class VideoController:
         # Thread GUI
         self.th_gui = threading.Thread(target=self.create_gui, args=(root,))
         self.th_gui.start()
+
+        # Thread GPIO
+        self.th_gpio = threading.Thread(target=self.start_gpio)
+        self.th_gpio.start()
 
         self.titre_video_gui = tk.StringVar()
 
@@ -141,6 +147,18 @@ class VideoController:
     def bouton_localisation_arret_command(self):
         print("localisation/arret clicked")
 
+    def play_next_video(self):
+        # Methode pour jouer la video suivante dans la liste de lecture
+        if self.video_display is not None:
+            self.video_display.stop_playing()
+            self.video_display = None
+
+        # Passer a la vidéo suivante
+        self.current_video = self.play_list.next_video()
+
+        # Jouer la nouvelle vidéo
+        self.play(False, self.current_video)
+
     def skip(self):
         # TODO: Requete a l'API
 
@@ -176,5 +194,8 @@ class VideoController:
     def bouton_play(self):
         if self.video_display is None:
             self.play(False, self.current_video)
+
+    def start_gpio(self):
+        self.sensor.loop()
 
     # TODO: Requete a l'API toutes les 5 secondes
