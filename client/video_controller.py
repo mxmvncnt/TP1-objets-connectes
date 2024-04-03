@@ -5,6 +5,7 @@ import tkinter as tk
 import tkinter.font as tkFont
 
 import settings as s
+from client.video import Video
 from play_list import PlayList
 from video_display import VideoDisplay
 
@@ -12,23 +13,21 @@ FONT_SIZE = 12
 
 
 class VideoController:
-    """ def __init__(self, root: tk.Tk, play_list: PlayList):
-        self.play_list = play_list """
-
     def __init__(self, root: tk.Tk, play_list: PlayList):
         self.video_display = None
 
+        self.play_list = play_list
+        self.current_video: Video = self.play_list.current_video
+
         # Thread Affichage Video
-        self.th_video_display = threading.Thread(target=self.start_video_player, args=(True,))
+        self.th_video_display = threading.Thread(target=self.play, args=(True, self.current_video,))
         self.th_video_display.start()
 
         # Thread GUI
         self.th_gui = threading.Thread(target=self.create_gui, args=(root,))
         self.th_gui.start()
 
-        self.play_list = play_list
-        self.current_video_name = self.play_list.current_video.fichier.split(
-            f"{os.path.dirname(os.path.realpath(__file__))}/videos/")[1]
+        self.titre_video_gui = tk.StringVar()
 
     def create_gui(self, root):
         self.root = root
@@ -56,15 +55,14 @@ class VideoController:
         label_video_en_cours["font"] = ft
         label_video_en_cours["fg"] = "#333333"
         label_video_en_cours["justify"] = "left"
-        label_video_en_cours["text"] = "Vidéo en cours :"
+        label_video_en_cours["text"] = "Vidéo en cours: "
         label_video_en_cours.place(x=40, y=50, width=105, height=30)
 
-        label_nom_video_en_cours = tk.Label(root)
+        label_nom_video_en_cours = tk.Label(root, textvariable=self.titre_video_gui)
         ft = tkFont.Font(family='Times', size=FONT_SIZE)
         label_nom_video_en_cours["font"] = ft
         label_nom_video_en_cours["fg"] = "#333333"
         label_nom_video_en_cours["justify"] = "left"
-        label_nom_video_en_cours["text"] = f"{self.current_video_name}"
         label_nom_video_en_cours.place(x=150, y=50, width=150, height=30)
 
         label_nombre_lectures = tk.Label(root)
@@ -110,7 +108,7 @@ class VideoController:
         bouton_video_suivante["justify"] = "center"
         bouton_video_suivante["text"] = "Passer à la vidéo suivante"
         bouton_video_suivante.place(x=110, y=250, width=173, height=37)
-        bouton_video_suivante["command"] = self.bouton_video_suivante_command
+        bouton_video_suivante["command"] = self.skip
 
         bouton_arreter_videos = tk.Button(root)
         bouton_arreter_videos["bg"] = "#c0c0c0"
@@ -120,7 +118,7 @@ class VideoController:
         bouton_arreter_videos["justify"] = "center"
         bouton_arreter_videos["text"] = "Arrêter les vidéos"
         bouton_arreter_videos.place(x=40, y=310, width=133, height=39)
-        bouton_arreter_videos["command"] = self.bouton_arreter_videos_command
+        bouton_arreter_videos["command"] = self.stop
 
         bouton_demarrer_videos = tk.Button(root)
         bouton_demarrer_videos["bg"] = "#c0c0c0"
@@ -130,7 +128,7 @@ class VideoController:
         bouton_demarrer_videos["justify"] = "center"
         bouton_demarrer_videos["text"] = "Démarrer les vidéos"
         bouton_demarrer_videos.place(x=190, y=310, width=168, height=38)
-        bouton_demarrer_videos["command"] = self.bouton_demarrer_videos_command
+        bouton_demarrer_videos["command"] = self.bouton_play
 
         label_mouvement_detecte = tk.Label(root)
         ft = tkFont.Font(family='Times', size=FONT_SIZE)
@@ -143,32 +141,40 @@ class VideoController:
     def bouton_localisation_arret_command(self):
         print("localisation/arret clicked")
 
-    def bouton_video_suivante_command(self):
+    def skip(self):
         # TODO: Requete a l'API
 
         if self.video_display is not None:
-            self.video_display.play_next_video()
-        else:
-            self.start_video_player(False)
+            print(f"skipping to video: {self.play_list.current_video.fichier}")
 
-    def bouton_arreter_videos_command(self):
+            self.stop()
+            self.current_video = self.play_list.next_video()
+            self.play(False, self.current_video)
+        else:
+            self.play(False, self.play_list.current_video)
+
+    def stop(self):
         if self.video_display is not None:
             # TODO: Requete a l'API
             self.video_display.stop_playing()
             self.video_display = None
+            self.titre_video_gui.set("")
 
-    def bouton_demarrer_videos_command(self):
-        if self.video_display is None:
-            self.start_video_player(False)
-
-    def start_video_player(self, wait):
+    def play(self, wait: bool, video: Video):
         if wait:
+            print("waiting for delay...")
             time.sleep(s.WAIT_FOR_VIDEO_PLAYER)
 
         # TODO: Requete a l'API
 
         if self.video_display is None:
-            self.video_display = VideoDisplay()
-            self.video_display.play()
+            print(f"playing video: {video.fichier}")
+            self.video_display = VideoDisplay(video, self.skip)
+            self.titre_video_gui.set(
+                self.current_video.fichier.split(f"{os.path.dirname(os.path.realpath(__file__))}/videos/")[1])
+
+    def bouton_play(self):
+        if self.video_display is None:
+            self.play(False, self.current_video)
 
     # TODO: Requete a l'API toutes les 5 secondes
