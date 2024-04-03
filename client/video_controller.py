@@ -16,7 +16,10 @@ FONT_SIZE = 12
 class VideoController:
     def __init__(self, root: tk.Tk, play_list: PlayList):
         self.video_display = None
+
         self.sensor = Sensor(on_motion_callback=self.skip)
+        self.led_blinking = False
+        self.led_thread = None
 
         self.play_list = play_list
         self.current_video: Video = self.play_list.current_video
@@ -146,6 +149,11 @@ class VideoController:
 
     def bouton_localisation_arret_command(self):
         print("localisation/arret clicked")
+        if self.video_display is not None:
+            if not self.led_blinking:
+                self.start_led_blinking_thread()
+            else:
+                self.stop_led_blinking_thread()
 
     def play_next_video(self):
         # Methode pour jouer la video suivante dans la liste de lecture
@@ -178,6 +186,9 @@ class VideoController:
             self.video_display = None
             self.titre_video_gui.set("")
 
+            if self.led_blinking:
+                    self.stop_led_blinking_thread()
+
     def play(self, wait: bool, video: Video):
         if wait:
             print("waiting for delay...")
@@ -197,5 +208,23 @@ class VideoController:
 
     def start_gpio(self):
         self.sensor.loop()
+
+    def start_led_blinking_thread(self):
+        self.led_blinking = True
+        self.led_thread = threading.Thread(target=self.led_blink)
+        self.led_thread.start()
+
+    def stop_led_blinking_thread(self):
+        self.led_blinking = False
+        if self.led_thread is not None:
+            self.led_thread.join()
+            self.led_thread = None
+
+    def led_blink(self):
+        while self.led_blinking:
+            self.sensor.turn_on_led()
+            time.sleep(0.5)
+            self.sensor.turn_off_led()
+            time.sleep(0.5)
 
     # TODO: Requete a l'API toutes les 5 secondes

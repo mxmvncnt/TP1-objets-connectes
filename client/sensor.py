@@ -29,12 +29,20 @@ class Sensor:
                 if self.on_motion_callback and not m_callback_executed:
                     self.on_motion_callback()
                     m_callback_executed = True
-                GPIO.output(self.ledPin,GPIO.HIGH) # turn on led
+                #self.turn_on_led() # turn on led
                 #print ('led turned on >>>')
             else :
                 m_callback_executed = False
-                GPIO.output(self.ledPin,GPIO.LOW) # turn off led
+                #self.turn_off_led() # turn off led
                 #print ('led turned off <<<')
 
     def destroy(self):
         GPIO.cleanup()                     # Release GPIO resource
+
+    def turn_on_led(self):
+        print('Led on')
+        GPIO.output(self.ledPin,GPIO.HIGH)
+
+    def turn_off_led(self):
+        print('Led off')
+        GPIO.output(self.ledPin,GPIO.LOW)
