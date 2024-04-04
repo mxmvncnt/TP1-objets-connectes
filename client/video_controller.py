@@ -14,8 +14,10 @@ try:
     sensor_found: bool = True
 except RuntimeError:
     print("Could not load Sensor module because the device does not support GPIO.")
-finally:
     sensor_found: bool = False
+finally:
+    pass
+   
 
 FONT_SIZE = 12
 
