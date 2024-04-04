@@ -50,6 +50,7 @@ class VideoController:
 
         self.titre_video_gui = tk.StringVar()
         self.text_detection_motion = tk.StringVar()
+        self.text_detection_motion.set("Non")
 
     def create_gui(self, root):
         self.root = root
@@ -157,8 +158,15 @@ class VideoController:
         label_mouvement_detecte["font"] = ft
         label_mouvement_detecte["fg"] = "#333333"
         label_mouvement_detecte["justify"] = "left"
-        label_mouvement_detecte["text"] = f"Mouvement détecté : {self.text_detection_motion.get()}"
+        label_mouvement_detecte["text"] = "Mouvement détecté : "
         label_mouvement_detecte.place(x=340, y=240, width=149, height=30)
+
+        label_txt_mouvement_detecte = tk.Label(root, textvariable=self.text_detection_motion)
+        ft = tkFont.Font(family='Times', size=FONT_SIZE)
+        label_txt_mouvement_detecte["font"] = ft
+        label_txt_mouvement_detecte["fg"] = "#333333"
+        label_txt_mouvement_detecte["justify"] = "left"
+        label_txt_mouvement_detecte.place(x=480, y=240, width=50, height=30)
 
     def bouton_localisation_arret_command(self):
         print("localisation/arret clicked")
@@ -239,12 +247,10 @@ class VideoController:
                 self.sensor.turn_off_led()
                 time.sleep(0.5)
 
-    def handle_motion_detection(self, detection):
-        if detection:
-            self.text_detection_motion.set('Oui')
-            self.skip()
-        else:
-            self.text_detection_motion.set('Non')
+    def handle_motion_detection(self):
+        self.text_detection_motion.set("Oui")
+        self.skip()
+        self.text_detection_motion.set("Non")
 
     # TODO: Requete a l'API toutes les 5 secondes
     def send_watch_data(self):

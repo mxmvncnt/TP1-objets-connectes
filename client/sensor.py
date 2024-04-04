@@ -20,10 +20,9 @@ class Sensor:
         while True:
             if GPIO.input(self.sensorPin)==GPIO.HIGH:
                 if self.on_motion_callback and not m_callback_executed:
-                    self.on_motion_callback(True)
+                    self.on_motion_callback()
                     m_callback_executed = True
             else :
-                self.on_motion_callback(False)
                 m_callback_executed = False
 
     def destroy(self):
