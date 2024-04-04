@@ -4,6 +4,8 @@ import time
 import tkinter as tk
 import tkinter.font as tkFont
 
+import requests
+
 import settings as s
 from video import Video
 from play_list import PlayList
@@ -191,7 +193,19 @@ class VideoController:
 
     def stop(self):
         if self.video_display is not None:
-            # TODO: Requete a l'API
+            fin = int(time.time())
+            duree_lecture = int(fin - self.video_display.get_start_time())
+
+            requests.post(
+                url=f"{os.getenv('API_URL')}/historique/add",
+                data={"video_id": self.current_video.id, "duree_lecture": duree_lecture}
+            )
+
+            requests.post(
+                url=f"{os.getenv('API_URL')}/lecture/add",
+                data={"video_id": self.current_video.id, "debut": self.video_display.get_start_time(), "fin": fin}
+            )
+
             self.video_display.stop_playing()
             self.video_display = None
             self.titre_video_gui.set("")

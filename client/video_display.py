@@ -1,9 +1,15 @@
+
+
+from time import time
+
 import vlc
 import threading
 
 
 class VideoDisplay:
     def __init__(self, video, on_end_callback=None):
+        self.debut_lecture = time()
+
         self.video = video
         self.vlc = vlc.Instance()
         self.player = vlc.MediaPlayer()
@@ -15,6 +21,9 @@ class VideoDisplay:
 
         self.player.event_manager().event_attach(vlc.EventType.MediaPlayerEndReached, self.on_end_reached)
         self.on_end_callback = on_end_callback
+
+    def get_start_time(self):
+        return int(self.debut_lecture)
 
     def stop_playing(self):
         self.player.stop()

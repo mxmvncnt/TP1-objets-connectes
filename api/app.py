@@ -3,7 +3,7 @@ import os
 
 from flask import Flask, request
 
-from api import video, historique
+from api import video, historique, lecture
 from peewee import MySQLDatabase
 from dotenv import load_dotenv
 
@@ -49,6 +49,22 @@ def add_historique():
         video_id=int(data.get("video_id")),
         duree_lecture=int(data.get("duree_lecture"))
     )
+
+
+@app.post("/lecture/add")
+def add_lecture():
+    data = request.form
+
+    print("===")
+    print(data)
+    print("===")
+
+    return lecture.add_entry(
+        video_id=int(data.get("video_id")),
+        debut=int(data.get("debut")),
+        fin=int(data.get("fin"))
+    )
+
 
 
 if __name__ == '__main__':
