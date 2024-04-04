@@ -3,7 +3,6 @@ import tkinter as tk
 
 from clock import ClockApp
 from play_list import PlayList
-from sensor import Sensor
 from video_controller import VideoController
 
 play_list = PlayList()

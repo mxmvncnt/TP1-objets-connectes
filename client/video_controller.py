@@ -8,7 +8,14 @@ import settings as s
 from video import Video
 from play_list import PlayList
 from video_display import VideoDisplay
-from sensor import Sensor
+
+try:
+    from sensor import Sensor
+    sensor_found: bool = True
+except RuntimeError:
+    print("Could not load Sensor module because the device does not support GPIO.")
+finally:
+    sensor_found: bool = False
 
 FONT_SIZE = 12
 
@@ -17,9 +24,10 @@ class VideoController:
     def __init__(self, root: tk.Tk, play_list: PlayList):
         self.video_display = None
 
-        self.sensor = Sensor(on_motion_callback=self.skip)
         self.led_blinking = False
-        self.led_thread = None
+        if sensor_found:
+            self.sensor = Sensor(on_motion_callback=self.skip)
+            self.led_thread = None
 
         self.play_list = play_list
         self.current_video: Video = self.play_list.current_video
@@ -186,7 +194,8 @@ class VideoController:
             self.video_display = None
             self.titre_video_gui.set("")
 
-            if self.led_blinking:
+            if sensor_found:
+                if self.led_blinking:
                     self.stop_led_blinking_thread()
 
     def play(self, wait: bool, video: Video):
@@ -207,24 +216,28 @@ class VideoController:
             self.play(False, self.current_video)
 
     def start_gpio(self):
-        self.sensor.loop()
+        if sensor_found:
+            self.sensor.loop()
 
     def start_led_blinking_thread(self):
         self.led_blinking = True
-        self.led_thread = threading.Thread(target=self.led_blink)
-        self.led_thread.start()
+        if sensor_found:
+            self.led_thread = threading.Thread(target=self.led_blink)
+            self.led_thread.start()
 
     def stop_led_blinking_thread(self):
         self.led_blinking = False
-        if self.led_thread is not None:
-            self.led_thread.join()
-            self.led_thread = None
+        if sensor_found:
+            if self.led_thread is not None:
+                self.led_thread.join()
+                self.led_thread = None
 
     def led_blink(self):
-        while self.led_blinking:
-            self.sensor.turn_on_led()
-            time.sleep(0.5)
-            self.sensor.turn_off_led()
-            time.sleep(0.5)
+        if sensor_found:
+            while self.led_blinking:
+                self.sensor.turn_on_led()
+                time.sleep(0.5)
+                self.sensor.turn_off_led()
+                time.sleep(0.5)
 
     # TODO: Requete a l'API toutes les 5 secondes
