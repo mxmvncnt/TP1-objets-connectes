@@ -12,7 +12,7 @@ from video_display import VideoDisplay
 try:
     from sensor import Sensor
     sensor_found: bool = True
-except RuntimeError:
+except (RuntimeError, ModuleNotFoundError) as e:
     print("Could not load Sensor module because the device does not support GPIO.")
 finally:
     sensor_found: bool = False
