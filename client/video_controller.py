@@ -168,20 +168,14 @@ class VideoController:
                 self.stop_led_blinking_thread()
 
     def play_next_video(self):
-        # Methode pour jouer la video suivante dans la liste de lecture
         if self.video_display is not None:
             self.video_display.stop_playing()
             self.video_display = None
 
-        # Passer a la vidéo suivante
         self.current_video = self.play_list.next_video()
-
-        # Jouer la nouvelle vidéo
         self.play(False, self.current_video)
 
     def skip(self):
-        # TODO: Requete a l'API
-
         if self.video_display is not None:
             print(f"skipping to video: {self.play_list.current_video.fichier}")
 
@@ -193,18 +187,7 @@ class VideoController:
 
     def stop(self):
         if self.video_display is not None:
-            fin = int(time.time())
-            duree_lecture = int(fin - self.video_display.get_start_time())
-
-            requests.post(
-                url=f"{os.getenv('API_URL')}/historique/add",
-                data={"video_id": self.current_video.id, "duree_lecture": duree_lecture}
-            )
-
-            requests.post(
-                url=f"{os.getenv('API_URL')}/lecture/add",
-                data={"video_id": self.current_video.id, "debut": self.video_display.get_start_time(), "fin": fin}
-            )
+            self.send_watch_data()
 
             self.video_display.stop_playing()
             self.video_display = None
@@ -219,11 +202,10 @@ class VideoController:
             print("waiting for delay...")
             time.sleep(s.WAIT_FOR_VIDEO_PLAYER)
 
-        # TODO: Requete a l'API
-
         if self.video_display is None:
             print(f"playing video: {video.fichier}")
             self.video_display = VideoDisplay(video, self.skip)
+            self.current_video = video
             self.titre_video_gui.set(
                 self.current_video.fichier.split(f"{os.path.dirname(os.path.realpath(__file__))}/videos/")[1])
 
@@ -256,4 +238,16 @@ class VideoController:
                 self.sensor.turn_off_led()
                 time.sleep(0.5)
 
-    # TODO: Requete a l'API toutes les 5 secondes
+    def send_watch_data(self):
+        fin = int(time.time())
+        duree_lecture = int(fin - self.video_display.get_start_time())
+
+        requests.post(
+            url=f"{os.getenv('API_URL')}/historique/add",
+            data={"video_id": self.current_video.id, "duree_lecture": duree_lecture}
+        )
+
+        requests.post(
+            url=f"{os.getenv('API_URL')}/lecture/add",
+            data={"video_id": self.current_video.id, "debut": self.video_display.get_start_time(), "fin": fin}
+        )

@@ -44,16 +44,9 @@ class PlayList:
             if os.path.isfile(file_path):
                 _, extension = os.path.splitext(video.fichier)
                 if extension.lower() in extensions:
-                    videos.append(self.__build_video(file_path))
+                    video.fichier = file_path
+                    videos.append(video)
         return videos
-
-    def __build_video(self, vid_path):
-        id = len(self._videos) + 1
-        fichier = vid_path
-        taille = os.stat(vid_path).st_size / 1024  # en KB
-        md5 = 'none'
-        ordre = 1
-        return Video(id, fichier, taille, md5, ordre)
 
     def next_video(self) -> Video:
         if self._current_video_index + 1 < len(self._videos):
