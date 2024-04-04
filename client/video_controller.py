@@ -30,7 +30,7 @@ class VideoController:
 
         self.led_blinking = False
         if sensor_found:
-            self.sensor = Sensor(on_motion_callback=self.skip)
+            self.sensor = Sensor(on_motion_callback=self.handle_motion_detection)
             self.led_thread = None
 
         self.play_list = play_list
@@ -49,6 +49,7 @@ class VideoController:
         self.th_gpio.start()
 
         self.titre_video_gui = tk.StringVar()
+        self.text_detection_motion = tk.StringVar()
 
     def create_gui(self, root):
         self.root = root
@@ -156,7 +157,7 @@ class VideoController:
         label_mouvement_detecte["font"] = ft
         label_mouvement_detecte["fg"] = "#333333"
         label_mouvement_detecte["justify"] = "left"
-        label_mouvement_detecte["text"] = "Mouvement détecté :"
+        label_mouvement_detecte["text"] = f"Mouvement détecté : {self.text_detection_motion.get()}"
         label_mouvement_detecte.place(x=340, y=240, width=149, height=30)
 
     def bouton_localisation_arret_command(self):
@@ -255,5 +256,12 @@ class VideoController:
                 time.sleep(0.5)
                 self.sensor.turn_off_led()
                 time.sleep(0.5)
+
+    def handle_motion_detection(self, detection):
+        if detection:
+            self.text_detection_motion.set('Oui')
+            self.skip()
+        else:
+            self.text_detection_motion.set('Non')
 
     # TODO: Requete a l'API toutes les 5 secondes
