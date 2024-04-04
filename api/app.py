@@ -1,10 +1,13 @@
+import json
 import os
 
 from flask import Flask, request
 
-from api import video
+from api import video, historique
 from peewee import MySQLDatabase
 from dotenv import load_dotenv
+
+from api.database.models import Video
 
 load_dotenv()
 
@@ -35,6 +38,16 @@ def add_video():
         taille=data.get("taille"),
         md5=data.get("md5"),
         ordre=data.get("ordre")
+    )
+
+
+@app.post("/historique/add")
+def add_historique():
+    data = request.form
+
+    return historique.add_entry(
+        video_id=int(data.get("video_id")),
+        duree_lecture=int(data.get("duree_lecture"))
     )
 
 

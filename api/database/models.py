@@ -3,6 +3,7 @@ import os
 from flask import jsonify
 from peewee import *
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv()
 
@@ -18,6 +19,12 @@ db = MySQLDatabase(
 class BaseModel(Model):
     class Meta:
         database = db
+
+    def get_db(self):
+        return self.Meta.database
+
+    def execute_sql(self, query, params=None, commit=None):
+        db.execute_sql(query, params, commit)
 
     def json(self):
         """Converts model instance to a dictionary."""
@@ -49,11 +56,8 @@ class Historique(BaseModel):
 
 
 def to_json(query_result):
-    if (len(query_result) <= 0):
+    if len(query_result) <= 0:
         return jsonify({"message": "Aucun résultat trouvé"})
 
-    if isinstance(query_result, list):
-        result = [model_instance.json() for model_instance in query_result]
-    else:
-        result = query_result.json()
+    result = [model_instance.json() for model_instance in query_result]
     return jsonify(result)
