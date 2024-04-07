@@ -28,6 +28,6 @@ def start_video_controller():
 
 
 if __name__ == '__main__':
-    th_video_controller = threading.Thread(target=start_video_controller, args=())
-    th_clock = threading.Thread(target=start_clock, args=())
+    th_video_controller = threading.Thread(target=start_video_controller, args=(), daemon=True)
+    th_clock = threading.Thread(target=start_clock, args=(), daemon=True)
     main()

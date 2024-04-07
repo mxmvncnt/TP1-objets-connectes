@@ -37,15 +37,15 @@ class VideoController:
         self.current_video: Video = self.play_list.current_video
 
         # Thread Affichage Video
-        self.th_video_display = threading.Thread(target=self.play, args=(True, self.current_video,))
+        self.th_video_display = threading.Thread(target=self.play, args=(True, self.current_video,), daemon=True)
         self.th_video_display.start()
 
         # Thread GUI
-        self.th_gui = threading.Thread(target=self.create_gui, args=(root,))
+        self.th_gui = threading.Thread(target=self.create_gui, args=(root,), daemon=True)
         self.th_gui.start()
 
         # Thread GPIO
-        self.th_gpio = threading.Thread(target=self.start_gpio)
+        self.th_gpio = threading.Thread(target=self.start_gpio, daemon=True)
         self.th_gpio.start()
 
         self.titre_video_gui = tk.StringVar()
@@ -229,7 +229,7 @@ class VideoController:
     def start_led_blinking_thread(self):
         self.led_blinking = True
         if sensor_found:
-            self.led_thread = threading.Thread(target=self.led_blink)
+            self.led_thread = threading.Thread(target=self.led_blink, daemon=True)
             self.led_thread.start()
 
     def stop_led_blinking_thread(self):

@@ -30,7 +30,7 @@ class VideoDisplay:
         self.vlc.release()
 
     def on_end_reached(self, event):
-        threading.Thread(target=self.handle_end_event).start()
+        threading.Thread(target=self.handle_end_event, daemon=True).start()
 
     def handle_end_event(self):
         if self.on_end_callback:
