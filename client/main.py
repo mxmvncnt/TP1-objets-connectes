@@ -14,7 +14,6 @@ def main():
         th_video_controller.join()
     else:
         th_clock.start()
-        th_clock.join()
 
 
 def start_clock():
@@ -30,4 +29,5 @@ def start_video_controller():
 if __name__ == '__main__':
     th_video_controller = threading.Thread(target=start_video_controller, args=(), daemon=True)
     th_clock = threading.Thread(target=start_clock, args=(), daemon=True)
+    
     main()

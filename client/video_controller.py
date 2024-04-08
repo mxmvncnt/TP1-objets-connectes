@@ -26,6 +26,14 @@ FONT_SIZE = 12
 
 class VideoController:
     def __init__(self, root: tk.Tk, play_list: PlayList):
+
+
+        self.titre_video_gui = tk.StringVar()
+        self.count_today = tk.StringVar()
+        self.duree_today = tk.StringVar()
+        self.text_detection_motion = tk.StringVar()
+        self.text_detection_motion.set("Non")
+
         self.video_display = None
 
         self.led_blinking = False
@@ -48,12 +56,9 @@ class VideoController:
         self.th_gpio = threading.Thread(target=self.start_gpio, daemon=True)
         self.th_gpio.start()
 
-        self.titre_video_gui = tk.StringVar()
-        self.count_today = tk.StringVar()
-        self.duree_today = tk.StringVar()
-        self.text_detection_motion = tk.StringVar()
-        self.text_detection_motion.set("Non")
+        self.display_stats()
 
+        
     def create_gui(self, root):
         self.root = root
         # setting title
@@ -218,6 +223,7 @@ class VideoController:
             self.current_video = video
             self.titre_video_gui.set(
                 self.current_video.fichier.split(f"{os.path.dirname(os.path.realpath(__file__))}/videos/")[1])
+            self.start_led_turn_on_thread()
 
     def bouton_play(self):
         if self.video_display is None:
@@ -226,6 +232,12 @@ class VideoController:
     def start_gpio(self):
         if sensor_found:
             self.sensor.loop()
+
+    # def start_led_turn_on_thread(self):
+    #     self.led_blinking = True
+    #     if sensor_found:
+    #         self.led_thread = threading.Thread(target=self.led_on_video, daemon=True)
+    #         self.led_thread.start()
 
     def start_led_blinking_thread(self):
         self.led_blinking = True
@@ -248,10 +260,22 @@ class VideoController:
                 self.sensor.turn_off_led()
                 time.sleep(0.5)
 
+    # def led_on_video(self):
+    #     if sensor_found:
+    #         while self.video_display is not None:
+    #             self.sensor.turn_on_led()
+            
+    #         self.sensor.turn_off_led()
+
     def handle_motion_detection(self):
         self.text_detection_motion.set("Oui")
         self.skip()
         self.text_detection_motion.set("Non")
+
+    
+    def display_stats(self):
+        count = requests.get(url=f"{os.getenv('API_URL')}/historique/today/count")
+        self.count_today.set(f"Nombre total des vidéos joués aujourd'hui: {count.json()}")
 
     def send_watch_data(self):
         fin = int(time.time())
@@ -267,5 +291,7 @@ class VideoController:
             data={"video_id": self.current_video.id, "debut": self.video_display.get_start_time(), "fin": fin}
         )
 
-        count = requests.get(url=f"{os.getenv('API_URL')}/historique/today/count")
-        self.count_today = f"Nombre total des vidéos joués aujourd'hui: {count}"
+        self.display_stats()
+
+
+

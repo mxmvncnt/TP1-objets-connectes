@@ -11,6 +11,7 @@ class Sensor:
         
 
     def setup(self):
+        GPIO.cleanup()
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.ledPin, GPIO.OUT)
         GPIO.setup(self.sensorPin, GPIO.IN)
