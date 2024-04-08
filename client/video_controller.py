@@ -49,6 +49,8 @@ class VideoController:
         self.th_gpio.start()
 
         self.titre_video_gui = tk.StringVar()
+        self.count_today = tk.StringVar()
+        self.duree_today = tk.StringVar()
         self.text_detection_motion = tk.StringVar()
         self.text_detection_motion.set("Non")
 
@@ -96,12 +98,11 @@ class VideoController:
         label_nombre_lectures["text"] = "Nombre joué aujourd'hui :"
         label_nombre_lectures.place(x=40, y=100, width=174, height=30)
 
-        label_nombre_total_videos_jouees = tk.Label(root)
+        label_nombre_total_videos_jouees = tk.Label(root, textvariable=self.count_today)
         ft = tkFont.Font(family='Times', size=FONT_SIZE)
         label_nombre_total_videos_jouees["font"] = ft
         label_nombre_total_videos_jouees["fg"] = "#333333"
         label_nombre_total_videos_jouees["justify"] = "left"
-        label_nombre_total_videos_jouees["text"] = "Nombre total des vidéos joués aujourd'hui :"
         label_nombre_total_videos_jouees.place(x=40, y=140, width=289, height=30)
 
         label_temps_joue = tk.Label(root)
@@ -252,7 +253,6 @@ class VideoController:
         self.skip()
         self.text_detection_motion.set("Non")
 
-    # TODO: Requete a l'API toutes les 5 secondes
     def send_watch_data(self):
         fin = int(time.time())
         duree_lecture = int(fin - self.video_display.get_start_time())
@@ -266,3 +266,6 @@ class VideoController:
             url=f"{os.getenv('API_URL')}/lecture/add",
             data={"video_id": self.current_video.id, "debut": self.video_display.get_start_time(), "fin": fin}
         )
+
+        count = requests.get(url=f"{os.getenv('API_URL')}/historique/today/count")
+        self.count_today = f"Nombre total des vidéos joués aujourd'hui: {count}"

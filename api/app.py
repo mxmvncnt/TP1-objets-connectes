@@ -30,6 +30,11 @@ def get_video(video_id):
     return video.get_by_id(video_id)
 
 
+@app.get("/historique/today/count")
+def get_count_today():
+    return str(historique.get_count_today())
+
+
 @app.post("/video/add")
 def add_video():
     data = request.form

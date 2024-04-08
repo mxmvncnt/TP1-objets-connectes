@@ -12,3 +12,7 @@ def add_entry(video_id: int, duree_lecture: int):
         [datetime.today(), int(video_id), int(duree_lecture), int(duree_lecture)])
 
     return "Ajoute une entree"
+
+
+def get_count_today():
+    return Historique.select().where(Historique.date == datetime.today()).count()
