@@ -9,12 +9,8 @@ import lombok.Data;
 @Table(name = "video")
 public class Video {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    @OneToOne
-    @JoinColumn(name = "device_id", referencedColumnName = "id")
-    private Device device;
 
     @Column(name = "file")
     private String file;

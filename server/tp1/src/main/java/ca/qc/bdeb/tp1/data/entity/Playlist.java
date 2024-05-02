@@ -9,7 +9,7 @@ import lombok.Data;
 @Table(name = "playlist")
 public class Playlist {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @OneToOne

@@ -11,7 +11,6 @@ import java.util.List;
 
 @Repository
 public interface PlaylistRepository extends JpaRepository<Playlist, Integer>{
-    @Query("SELECT p.video FROM Playlist p WHERE p.video.device.id = :deviceId ORDER BY p.position")
+    @Query("SELECT p.video FROM Playlist p WHERE p.device = :deviceId ORDER BY p.position")
     List<Video> getPlaylistByDeviceId(@Param("deviceId") int deviceId);
-
 }

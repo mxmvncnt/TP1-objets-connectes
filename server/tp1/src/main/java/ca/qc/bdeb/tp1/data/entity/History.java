@@ -11,7 +11,7 @@ import java.util.Date;
 @Table(name = "history")
 public class History {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @OneToOne
