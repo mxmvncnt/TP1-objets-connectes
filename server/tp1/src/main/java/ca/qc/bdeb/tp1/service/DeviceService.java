@@ -17,4 +17,8 @@ public class DeviceService {
     public List<Device> getAllDevices() {
         return repository.findAll();
     }
+
+    public void setDeviceLost(int deviceId, boolean lostStatus) {
+        repository.setLostStatus(deviceId, lostStatus);
+    }
 }

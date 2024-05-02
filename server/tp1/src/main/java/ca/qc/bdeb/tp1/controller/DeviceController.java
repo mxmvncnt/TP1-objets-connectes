@@ -22,4 +22,10 @@ public class DeviceController {
         return deviceService.getAllDevices();
     }
 
+    @GetMapping("/devices/{deviceId}/lost")
+    public void lostDevice(
+            @PathVariable int deviceId,
+            @RequestParam boolean isLost) {
+        deviceService.setDeviceLost(deviceId, isLost);
+    }
 }
