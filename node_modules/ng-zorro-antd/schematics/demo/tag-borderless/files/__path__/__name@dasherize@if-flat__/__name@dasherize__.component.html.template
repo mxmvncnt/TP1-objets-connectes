@@ -1,0 +1,5 @@
+
+    <ng-container *ngFor="let color of tagColors">
+      <nz-tag [nzColor]="color" [nzBordered]="false">{{ color }}</nz-tag>
+    </ng-container>
+  

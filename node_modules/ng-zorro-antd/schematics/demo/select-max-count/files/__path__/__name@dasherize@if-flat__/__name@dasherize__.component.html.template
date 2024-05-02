@@ -1,0 +1,12 @@
+
+    <nz-select
+      [nzMaxMultipleCount]="3"
+      nzMode="multiple"
+      nzPlaceHolder="Please select"
+      nzAllowClear
+      [nzShowArrow]="true"
+      [(ngModel)]="listOfSelectedValue"
+    >
+      <nz-option *ngFor="let item of listOfOption" [nzLabel]="item" [nzValue]="item"></nz-option>
+    </nz-select>
+  

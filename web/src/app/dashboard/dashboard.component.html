@@ -1,0 +1,50 @@
+<nz-table #basicTable [nzData]="listOfData">
+    <thead>
+      <tr>
+        <th>Nom de l'objet</th>
+        <th>Est localisé</th>
+        <th>Localisation</th>
+        <th>Téléverser une vidéo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.name }}</td>
+        <td>{{ data.isLocated ? 'Oui' : 'Non'}}</td>
+        <td>
+          <a href="">Localiser</a>
+        </td>
+        <td>
+          <div class="clearfix">
+            <nz-upload
+              nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+              nzListType="picture-card"
+              [(nzFileList)]="fileList"
+              [nzShowButton]="fileList.length < 8"
+              [nzPreview]="handlePreview"
+            >
+              <div>
+                <span nz-icon nzType="plus"></span>
+                <div style="margin-top: 8px">Upload</div>
+              </div>
+            </nz-upload>
+            <nz-modal
+              [nzVisible]="previewVisible"
+              [nzContent]="modalContent"
+              [nzFooter]="null"
+              (nzOnCancel)="previewVisible = false"
+            >
+              <ng-template #modalContent>
+                <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+              </ng-template>
+            </nz-modal>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+
+    
+    
+
+
+  </nz-table>
