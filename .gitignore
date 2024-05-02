@@ -314,3 +314,4 @@ pyrightconfig.json
 
 .DS_Store
 server/tp1/src/main/resources/secrets.properties
+/server/tp1/saved_videos
