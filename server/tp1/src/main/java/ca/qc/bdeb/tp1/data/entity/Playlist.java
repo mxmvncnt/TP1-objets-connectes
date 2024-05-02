@@ -16,6 +16,10 @@ public class Playlist {
     @JoinColumn(name = "video_id", referencedColumnName = "id")
     private Video video;
 
+    @OneToOne
+    @JoinColumn(name = "device_id", referencedColumnName = "id")
+    private Device device;
+
     @Column(name = "position")
     private int position;
 }

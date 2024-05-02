@@ -1,7 +1,9 @@
 package ca.qc.bdeb.tp1.controller;
 
 import ca.qc.bdeb.tp1.data.entity.Device;
+import ca.qc.bdeb.tp1.data.entity.Video;
 import ca.qc.bdeb.tp1.service.DeviceService;
+import ca.qc.bdeb.tp1.service.PlaylistService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,9 +14,13 @@ import java.util.List;
 @RestController
 public class DeviceController {
     private final DeviceService deviceService;
+    private final PlaylistService playlistService;
 
-    public DeviceController(DeviceService deviceService) {
+    public DeviceController(
+            DeviceService deviceService,
+            PlaylistService playlistService) {
         this.deviceService = deviceService;
+        this.playlistService = playlistService;
     }
 
     @GetMapping("/devices")
@@ -27,5 +33,11 @@ public class DeviceController {
             @PathVariable int deviceId,
             @RequestParam boolean isLost) {
         deviceService.setDeviceLost(deviceId, isLost);
+    }
+
+    @GetMapping("/devices/{deviceId}/playlist")
+    public List<Video> getPlaylist(
+            @PathVariable int deviceId) {
+        return playlistService.getPlaylist(deviceId);
     }
 }
