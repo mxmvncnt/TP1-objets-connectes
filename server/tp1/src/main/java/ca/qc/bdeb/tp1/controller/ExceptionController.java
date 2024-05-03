@@ -2,12 +2,14 @@ package ca.qc.bdeb.tp1.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@CrossOrigin()
 @RestControllerAdvice
 public class ExceptionController {
     @ExceptionHandler(ApiError.class)

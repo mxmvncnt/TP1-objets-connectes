@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+@CrossOrigin()
 @RestController
 public class DeviceController {
     private final DeviceService deviceService;
