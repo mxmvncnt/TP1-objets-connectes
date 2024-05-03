@@ -1,0 +1,22 @@
+<div style="padding: 0 40%">
+    <h1 style="text-align: center;">Liste de lecture</h1>
+    <hr>
+  </div>
+  <nz-table #basicTable [nzData]="playList">
+    <thead>
+    <tr>
+      <th>Vidéo</th>
+      <th>Taille (KB)</th>
+      <th>Supprimer</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let data of basicTable.data">
+      <td>{{ data.file }}</td>
+      <td>{{ data.size }}</td>
+      <td>
+        <button (click)="deleteVideo(data.id)" nz-button nzType="primary" nzDanger><span nz-icon nzType="delete" nzTheme="outline"></span></button>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>

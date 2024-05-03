@@ -8,6 +8,7 @@
 *.idea/
 client/videos/*
 client/__pycache__
+node_modules/*
 
 # User-specific stuff
 .idea/**/workspace.xml

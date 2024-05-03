@@ -1,3 +1,7 @@
+<div style="padding: 0 40%">
+  <h1 style="text-align: center;">Tableau de bord</h1>
+  <hr>
+</div>
 <nz-table #basicTable [nzData]="listOfData">
   <thead>
   <tr>
@@ -5,7 +9,7 @@
     <th>Emplacement</th>
     <th>Mode localisation</th>
     <th>Localisation</th>
-    <th>Téléverser une vidéo</th>
+    <th>Liste de lecture</th>
   </tr>
   </thead>
   <tbody>
@@ -17,7 +21,8 @@
       <a href="">Localiser</a>
     </td>
     <td>
-      <div class="clearfix">
+      <a [routerLink]="data.id + '/playlist'">Consulter la liste</a>
+      <!-- <div class="clearfix">
         <nz-upload
           nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76"
           nzListType="picture-card"
@@ -40,7 +45,7 @@
             <img [src]="previewImage" [ngStyle]="{ width: '100%' }"/>
           </ng-template>
         </nz-modal>
-      </div>
+      </div> -->
     </td>
   </tr>
   </tbody>
