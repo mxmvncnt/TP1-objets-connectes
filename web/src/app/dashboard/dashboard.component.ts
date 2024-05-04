@@ -63,4 +63,11 @@ export class DashBoardComponent implements OnInit {
         this.listOfData = deviceList;
       });
   }
+
+  toggleDeviceLost(device: Device): void {
+    this.dataService.getData(`/devices/${device.id}/lost?isLost=${!device.isLost}`, )
+      .subscribe(data => {
+        device.isLost = !device.isLost;
+      });
+  }
 }
