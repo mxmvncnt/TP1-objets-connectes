@@ -18,7 +18,7 @@
     <td>{{ data.location }}</td>
     <td>{{ data.isLost ? 'Oui' : 'Non' }}</td>
     <td>
-      <button (click)="toggleDeviceLost(data)" onclick="deviceLost()">Localiser</button>
+      <button nz-button nzType="secondary" (click)="toggleDeviceLost(data)" onclick="deviceLost()">Localiser</button>
     </td>
     <td>
       <a [routerLink]="data.id + '/playlist'">Consulter la liste</a>
