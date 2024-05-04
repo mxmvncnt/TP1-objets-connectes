@@ -38,14 +38,37 @@ public class StorageService {
         file.transferTo(destinationPath.toFile());
     }
 
+//    public Video getVideo(MultipartFile file) throws IOException {
+//        Video video = new Video();
+//
+//        video.setFile(file.getOriginalFilename());
+//        video.setSize((int) file.getSize());
+//        video.setMd5(DigestUtils.md5DigestAsHex(file.getBytes()));
+//        return video;
+//    }
+
     public Video getVideo(MultipartFile file) throws IOException {
+        Path projectRootDir = Paths.get("").toAbsolutePath();
+        Path folderPath = projectRootDir.resolve("saved_videos");
+
+        if (file.getOriginalFilename() == null || file.getOriginalFilename().contains("..")) {
+            throw new IllegalArgumentException("Invalid filename");
+        }
+        String fileName = file.getOriginalFilename();
+        Path filePath = folderPath.resolve(fileName);
+
         Video video = new Video();
 
-        video.setFile(file.getOriginalFilename());
+        video.setFile(fileName);
         video.setSize((int) file.getSize());
-        video.setMd5(DigestUtils.md5DigestAsHex(file.getBytes()));
-
+        video.setMd5(calculateMD5(filePath));
         return video;
+    }
+
+    private String calculateMD5(Path filePath) throws IOException{
+        try (InputStream inputStream = Files.newInputStream(filePath)) {
+            return DigestUtils.md5DigestAsHex(inputStream);
+        }
     }
 
     public Boolean validate(MultipartFile file) {

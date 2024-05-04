@@ -18,5 +18,35 @@
         <button (click)="deleteVideo(data.id)" nz-button nzType="primary" nzDanger><span nz-icon nzType="delete" nzTheme="outline"></span></button>
       </td>
     </tr>
+    <tr>
+      <td></td>
+      <!-- <td style="text-align: center;"><button (click)="addVideoToPlaylist()" nz-button nzType="primary" nzGhost><span nz-icon nzType="plus" nzTheme="outline"></span>Add vidéo</button></td> -->
+      <div class="clearfix" style="text-align: center;">
+        <nz-upload 
+          [nzAction]="getUploadUrl()"
+          nzListType="picture-card"
+          nzAccept="video/*"
+          [(nzFileList)]="fileList"
+          [nzShowButton]="fileList.length < 8"
+          [nzPreview]="handlePreview"
+        >
+          <div>
+            <span nz-icon nzType="plus"></span>
+            <div style="margin-top: 8px">Téléverser</div>
+          </div>
+        </nz-upload>
+        <nz-modal
+          [nzVisible]="previewVisible"
+          [nzContent]="modalContent"
+          [nzFooter]="null"
+          (nzOnCancel)="previewVisible = false"
+        >
+          <ng-template #modalContent>
+            <img [src]="previewImage" [ngStyle]="{ width: '100%' }"/>
+          </ng-template>
+        </nz-modal>
+      </div>
+      <td></td>
+    </tr>
     </tbody>
   </nz-table>
