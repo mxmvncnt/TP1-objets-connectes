@@ -18,4 +18,8 @@ export class DataService {
   postData(path: String, data: any): Observable<any> {
     return this.http.post<any>(this.apiUrl + path, data);
   }
+
+  deleteData(path: string): Observable<any> {
+    return this.http.delete<any>(this.apiUrl + path)
+  }
 }

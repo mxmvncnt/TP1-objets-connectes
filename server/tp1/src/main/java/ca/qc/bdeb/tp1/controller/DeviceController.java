@@ -58,4 +58,11 @@ public class DeviceController {
         videoService.save(video);
         playlistService.addToPlaylist(deviceId, video);
     }
+
+    @DeleteMapping("/devices/{deviceId}/playlist/{playlistId}")
+    public void removeVideoFromPlaylist(
+            @PathVariable int deviceId,
+            @PathVariable int playlistId) {
+        playlistService.deleteVideoFromPlaylist(playlistId);
+    }
 }

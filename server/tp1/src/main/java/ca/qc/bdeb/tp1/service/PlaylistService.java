@@ -30,6 +30,8 @@ public class PlaylistService {
         return playlistRepository.getPlaylistByDeviceId(deviceId);
     }
 
+    public void deleteVideoFromPlaylist(int playlistId) { playlistRepository.deleteVideoByPlaylistId(playlistId); }
+
     public void addToPlaylist(int deviceId, Video video) throws ApiError {
         Optional<Device> device = deviceRepository.findById(deviceId);
 

@@ -25,7 +25,7 @@ export class PlaylistComponent implements OnInit{
   deleteVideo(id) {
     console.log('Supprimé');
     this.playList = this.playList.filter(video => video.id !== id );
-    console.log(this.playList)
+    this.deleteData(id);
 
     // Ajouter la suppression de la vidéo de la playlist dans la bd
   }
@@ -45,6 +45,13 @@ export class PlaylistComponent implements OnInit{
         })
         this.playList = playList;
       });
+  }
+
+  deleteData(playlistId): void {
+    this.dataService.deleteData((`/devices/${this.deviceId}/playlist/${playlistId}`))
+    .subscribe(data => {
+      console.log(data)
+    })
   }
 
 }
