@@ -19,5 +19,5 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Integer>{
     @Transactional
     @Modifying
     @Query("DELETE FROM Playlist p WHERE p.device.id = :deviceId AND p.video.id = :videoId")
-    void deleteVideoFromPlaylist(@Param("deviceId") int deviceId, @Param("videoId") int playlistId);
+    void deleteVideoFromPlaylist(@Param("deviceId") int deviceId, @Param("videoId") int videoId);
 }
