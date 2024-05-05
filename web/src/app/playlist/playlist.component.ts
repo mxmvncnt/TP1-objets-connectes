@@ -14,36 +14,43 @@ const getBase64 = (file: File): Promise<string | ArrayBuffer | null> =>
   });
 
 @Component({
-  selector: 'app-playlist',
-  templateUrl: './playlist.component.html',
-  styleUrl: './playlist.component.scss'
+  selector: "app-playlist",
+  templateUrl: "./playlist.component.html",
+  styleUrl: "./playlist.component.scss",
 })
-export class PlaylistComponent implements OnInit{
-
-  playList: Video[] = []
+export class PlaylistComponent implements OnInit {
+  playList: Video[] = [];
   deviceId: number;
   
   fileList: NzUploadFile[] = []
   previewImage: string | undefined = '';
   previewVisible = false;
 
-  constructor(private dataService: DataService,
-              private route: ActivatedRoute
-  ) { }
+  constructor(
+    private dataService: DataService,
+    private route: ActivatedRoute,
+  ) {}
 
   ngOnInit(): void {
-    this.deviceId = this.route.snapshot.params['id'];
+    this.deviceId = this.route.snapshot.params["id"];
     this.getData();
   }
 
   deleteVideo(id) {
-    this.playList = this.playList.filter(video => video.id !== id );
-    this.deleteData(id);
+    this.playList = this.playList.filter((video) => video.id !== id);
+
+    this.dataService
+      .deleteData(`/devices/${this.deviceId}/playlist/${id}`)
+      .subscribe((data) => {
+        console.log(data);
+        console.log("Supprimé avec succès.");
+      });
   }
 
   getData(): void {
-    this.dataService.getData(`/devices/${this.deviceId}/playlist`)
-      .subscribe(data => {
+    this.dataService
+      .getData(`/devices/${this.deviceId}/playlist`)
+      .subscribe((data) => {
         let playList: Video[] = [];
 
         data.forEach((video: any) => {
@@ -53,34 +60,10 @@ export class PlaylistComponent implements OnInit{
           let md5: string = video.md5;
 
           playList.push(new Video(id, file, size, md5));
-        })
+        });
         this.playList = playList;
       });
   }
-
-  deleteData(playlistId): void {
-    this.dataService.deleteData((`/devices/${this.deviceId}/playlist/${playlistId}`))
-    .subscribe(data => {
-      console.log(data);
-      console.log('Supprimé avec succès.');
-    })
-  }
-
-//  uploadVideo(video: any, deviceId: number) {
-//   const form = new FormData();
-//   form.append("file", video);
-
-//   this.dataService.postData(`/devices/${deviceId}/video/add`, form)
-//  }
-
-//  handleChange(info: { file: NzUploadFile }): void {
-//   if (info.file.status === 'done') {
-//     console.log('Fichier téléchargé :', info.file);
-//     this.uploadVideo(info.file.originFileObj, this.deviceId);
-//   } else if (info.file.status === 'error') {
-//     console.error('Erreur lors du téléchargement du fichier :', info.file.error);
-//   }
-// }
 
  handlePreview = async (file: NzUploadFile): Promise<void> => {
   if (!file.url && !file.preview) {
@@ -93,5 +76,4 @@ export class PlaylistComponent implements OnInit{
 getUploadUrl(): string {
   return `${environment.apiUrl}/devices/${this.deviceId}/video/add`;
 }
-
 }

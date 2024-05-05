@@ -1,6 +1,5 @@
 package ca.qc.bdeb.tp1.data.repository;
 
-import ca.qc.bdeb.tp1.data.entity.Device;
 import ca.qc.bdeb.tp1.data.entity.Playlist;
 import ca.qc.bdeb.tp1.data.entity.Video;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,6 +18,6 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Integer>{
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM Playlist p WHERE p.id = :playlistId")
-    void deleteVideoByPlaylistId(@Param("playlistId") int playlistId);
+    @Query("DELETE FROM Playlist p WHERE p.device.id = :deviceId AND p.video.id = :videoId")
+    void deleteVideoFromPlaylist(@Param("deviceId") int deviceId, @Param("videoId") int playlistId);
 }
