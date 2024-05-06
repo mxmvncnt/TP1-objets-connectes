@@ -1,8 +1,6 @@
 package ca.qc.bdeb.tp1.service;
 
-import ca.qc.bdeb.tp1.data.entity.Device;
 import ca.qc.bdeb.tp1.data.entity.Video;
-import ca.qc.bdeb.tp1.data.repository.DeviceRepository;
 import ca.qc.bdeb.tp1.data.repository.VideoRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +14,11 @@ public class VideoService {
         this.repository = repository;
     }
 
-    public void save(Video video) {
+    public void addVideo(Video video) {
         repository.save(video);
+    }
+
+    public List<Video> getAllVideos() {
+        return repository.findAll();
     }
 }

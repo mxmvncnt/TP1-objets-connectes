@@ -20,4 +20,7 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Integer>{
     @Modifying
     @Query("DELETE FROM Playlist p WHERE p.device.id = :deviceId AND p.video.id = :videoId")
     void deleteVideoFromPlaylist(@Param("deviceId") int deviceId, @Param("videoId") int videoId);
+
+    @Query("SELECT p.position FROM Playlist p ORDER BY p.position LIMIT 1")
+    int getHighestPosition();
 }

@@ -55,7 +55,7 @@ public class DeviceController {
             @RequestBody MultipartFile file) throws IOException {
         storageService.save(file);
         Video video = storageService.getVideo(file);
-        videoService.save(video);
+        videoService.addVideo(video);
         playlistService.addToPlaylist(deviceId, video);
     }
 

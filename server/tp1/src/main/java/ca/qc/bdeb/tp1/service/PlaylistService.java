@@ -41,9 +41,12 @@ public class PlaylistService {
             throw new ApiError("", "", HttpStatus.NOT_FOUND);
         }
 
+        int position = playlistRepository.getHighestPosition() + 1;
+
         Playlist playlist = new Playlist();
         playlist.setVideo(video);
         playlist.setDevice(device.get());
+        playlist.setPosition(position);
         playlistRepository.save(playlist);
     }
 }
