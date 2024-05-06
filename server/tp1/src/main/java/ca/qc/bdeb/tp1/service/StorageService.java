@@ -21,8 +21,6 @@ import java.util.List;
 
 @Service
 public class StorageService {
-    private final Path rootLocation = Paths.get(System.getProperty("user.dir"));
-
     public void save(MultipartFile file) throws IOException {
         Path projectRootDir = Paths.get("").toAbsolutePath();
 
@@ -37,15 +35,6 @@ public class StorageService {
 
         file.transferTo(destinationPath.toFile());
     }
-
-//    public Video getVideo(MultipartFile file) throws IOException {
-//        Video video = new Video();
-//
-//        video.setFile(file.getOriginalFilename());
-//        video.setSize((int) file.getSize());
-//        video.setMd5(DigestUtils.md5DigestAsHex(file.getBytes()));
-//        return video;
-//    }
 
     public Video getVideo(MultipartFile file) throws IOException {
         Path projectRootDir = Paths.get("").toAbsolutePath();
@@ -65,7 +54,7 @@ public class StorageService {
         return video;
     }
 
-    private String calculateMD5(Path filePath) throws IOException{
+    private String calculateMD5(Path filePath) throws IOException {
         try (InputStream inputStream = Files.newInputStream(filePath)) {
             return DigestUtils.md5DigestAsHex(inputStream);
         }
