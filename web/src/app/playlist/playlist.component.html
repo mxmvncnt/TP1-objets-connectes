@@ -12,10 +12,10 @@
     </thead>
     <tbody>
     <tr *ngFor="let data of basicTable.data">
-      <td>{{ data.file }}</td>
-      <td>{{ data.size }}</td>
+      <td>{{ data.video.file }}</td>
+      <td>{{ data.video.size }}</td>
       <td>
-        <button (click)="deleteVideo(data.id)" nz-button nzType="primary" nzDanger><span nz-icon nzType="delete" nzTheme="outline"></span></button>
+        <button (click)="deleteVideo(data.video.id)" nz-button nzType="primary" nzDanger><span nz-icon nzType="delete" nzTheme="outline"></span></button>
       </td>
     </tr>
     <tr>

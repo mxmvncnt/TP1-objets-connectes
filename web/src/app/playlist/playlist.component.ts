@@ -13,13 +13,19 @@ const getBase64 = (file: File): Promise<string | ArrayBuffer | null> =>
     reader.onerror = error => reject(error);
   });
 
+
+interface PlayList {
+  video: Video;
+  position: number;
+}
+
 @Component({
   selector: "app-playlist",
   templateUrl: "./playlist.component.html",
   styleUrl: "./playlist.component.scss",
 })
 export class PlaylistComponent implements OnInit {
-  playList: Video[] = [];
+  playList: PlayList[]
   deviceId: number;
   
   fileList: NzUploadFile[] = []
@@ -37,7 +43,8 @@ export class PlaylistComponent implements OnInit {
   }
 
   deleteVideo(id) {
-    this.playList = this.playList.filter((video) => video.id !== id);
+    // this.playList = this.playList.filter((video) => video.id !== id);
+    this.playList = this.playList.filter((plistItem) => plistItem.video.id !== id);
 
     this.dataService
       .deleteData(`/devices/${this.deviceId}/playlist/${id}`)
@@ -51,15 +58,16 @@ export class PlaylistComponent implements OnInit {
     this.dataService
       .getData(`/devices/${this.deviceId}/playlist`)
       .subscribe((data) => {
-        let playList: Video[] = [];
+         const playList: PlayList[] = [];
 
-        data.forEach((video: any) => {
+        data.forEach((video: any, index: number) => {
           let id: number = video.id;
           let file: string = video.file;
           let size: number = video.size;
           let md5: string = video.md5;
+          let position: number = index + 1;
 
-          playList.push(new Video(id, file, size, md5));
+          playList.push({video : new Video(id, file, size, md5), position: position});
         });
         this.playList = playList;
       });
