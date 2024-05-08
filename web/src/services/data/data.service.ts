@@ -22,4 +22,8 @@ export class DataService {
   deleteData(path: string): Observable<any> {
     return this.http.delete<any>(this.apiUrl + path)
   }
+
+  patchData(path: string, data: any): Observable<any> {
+    return this.http.patch<any>(this.apiUrl + path, data);
+  }
 }

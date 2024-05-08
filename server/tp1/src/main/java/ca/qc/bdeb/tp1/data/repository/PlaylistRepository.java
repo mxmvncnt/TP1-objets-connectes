@@ -24,4 +24,9 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Integer>{
     @Query("SELECT MAX(p.position) FROM Playlist p WHERE p.device.id = :deviceId")
     Integer getHighestPosition(@Param("deviceId") int deviceId);
 
+    @Transactional
+    @Modifying
+    @Query("UPDATE Playlist p SET p.position = :position WHERE p.video.id = :videoID AND p.device.id = :deviceId")
+    void updateVideoPosition(@Param("position") int position, @Param("videoID") int videoID, @Param("deviceId") int deviceId);
+
 }

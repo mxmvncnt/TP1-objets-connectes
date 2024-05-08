@@ -65,4 +65,13 @@ public class DeviceController {
             @PathVariable int videoId) {
         playlistService.deleteVideoFromPlaylist(deviceId, videoId);
     }
+
+    @PatchMapping("/devices/{deviceId}/playlist/{videoId}/{position}")
+    public void updateVideoPosition(
+            @PathVariable int position,
+            @PathVariable int videoId,
+            @PathVariable int deviceId) {
+        playlistService.updateVideoPosition(position, videoId, deviceId);
+    }
+
 }

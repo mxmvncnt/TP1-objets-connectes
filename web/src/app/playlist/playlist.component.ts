@@ -100,22 +100,72 @@ goUp(index: number) {
     return;
   }
 
+  // Switch videos in playlist
   let tmpVideo = this.playList[index].video;
   this.playList[index].video = this.playList[index - 1].video;
   this.playList[index - 1].video = tmpVideo;
 
-  console.log(this.playList);
+
+  // Identify videos permuted indexes
+  const videoMovedIndex = index - 1;
+  const videoReplacedIndex = index;
+
+  // Get new IDs of videos permuted
+  const videoMovedId = this.playList[videoMovedIndex].video.id;
+  const videoReplacedId = this.playList[videoReplacedIndex].video.id;
+
+  // Get new Positions
+  const videoMovedPosition = this.playList[videoMovedIndex].position;
+  const videoReplacedPosition = this.playList[videoReplacedIndex].position;
+
+  // GetVideos
+  const videoMoved = this.playList[videoMovedIndex].video;
+  const videoReplaced = this.playList[videoReplacedIndex].video;
+
+  
+  this.changeVideoPositionInDb(videoMovedId, videoMovedPosition, videoMoved);
+  this.changeVideoPositionInDb(videoReplacedId, videoReplacedPosition, videoReplaced);
 
 }
 
 goDown(index: number) {
   if (index < this.playList.length - 1) {
+    // Switch videos in playlist
     let tmpVideo = this.playList[index].video;
     this.playList[index].video = this.playList[index + 1].video;
     this.playList[index + 1].video = tmpVideo;
+
+    // Identify videos permuted indexes
+    const videoMovedIndex = index + 1;
+    const videoReplacedIndex = index;    
+
+    // Get new IDs of videos permuted
+    const videoMovedId = this.playList[videoMovedIndex].video.id;
+    const videoReplacedId = this.playList[videoReplacedIndex].video.id;
+
+    // Get new Positions
+    const videoMovedPosition = this.playList[videoMovedIndex].position;
+    const videoReplacedPosition = this.playList[videoReplacedIndex].position;
+
+    // GetVideos
+    const videoMoved = this.playList[videoMovedIndex].video;
+    const videoReplaced = this.playList[videoReplacedIndex].video;
+
+    
+    this.changeVideoPositionInDb(videoMovedId, videoMovedPosition, videoMoved);
+    this.changeVideoPositionInDb(videoReplacedId, videoReplacedPosition, videoReplaced);
   }
   console.log(this.playList);
 }
+
+changeVideoPositionInDb(videoId: number, videoPosition: number, video: Video) {
+  this.dataService.patchData(`/devices/${this.deviceId}/playlist/${videoId}/${videoPosition}`, video).subscribe(
+    (data) => {
+      console.log(data);
+    }
+  )
+}
+
 
 nextExists(index: number): boolean {
   return index < this.playList.length - 1
