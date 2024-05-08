@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { Video } from '../model/video.model';
 import { DataService } from '../../services/data/data.service';
 import { ActivatedRoute } from '@angular/router';
@@ -24,7 +24,7 @@ interface PlayList {
   templateUrl: "./playlist.component.html",
   styleUrl: "./playlist.component.scss",
 })
-export class PlaylistComponent implements OnInit {
+export class PlaylistComponent implements OnInit, OnChanges{
   playList: PlayList[]
   deviceId: number;
   
@@ -40,7 +40,15 @@ export class PlaylistComponent implements OnInit {
   ngOnInit(): void {
     this.deviceId = this.route.snapshot.params["id"];
     this.getData();
+    
   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes.playList)
+  }
+  
+
+
 
   deleteVideo(id) {
     // this.playList = this.playList.filter((video) => video.id !== id);
@@ -70,6 +78,7 @@ export class PlaylistComponent implements OnInit {
           playList.push({video : new Video(id, file, size, md5), position: position});
         });
         this.playList = playList;
+        console.log(this.playList)
       });
   }
 
@@ -83,5 +92,35 @@ export class PlaylistComponent implements OnInit {
 
 getUploadUrl(): string {
   return `${environment.apiUrl}/devices/${this.deviceId}/video/add`;
+}
+
+goUp(index: number) {
+
+  if (index <= 0 || index >= this.playList.length) {
+    return;
+  }
+
+  let tmpVideo = this.playList[index].video;
+  this.playList[index].video = this.playList[index - 1].video;
+  this.playList[index - 1].video = tmpVideo;
+
+  console.log(this.playList);
+
+}
+
+goDown(index: number) {
+  if (index < this.playList.length - 1) {
+    let tmpVideo = this.playList[index].video;
+    this.playList[index].video = this.playList[index + 1].video;
+    this.playList[index + 1].video = tmpVideo;
+  }
+  console.log(this.playList);
+}
+
+nextExists(index: number): boolean {
+  return index < this.playList.length - 1
+}
+previousExists(index : number): boolean {
+  return index > 0
 }
 }

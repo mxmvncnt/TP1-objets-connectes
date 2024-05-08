@@ -8,14 +8,21 @@
       <th>Vidéo</th>
       <th>Taille (KB)</th>
       <th>Supprimer</th>
+      <th>Changer la position</th>
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let data of basicTable.data">
+    <tr *ngFor="let data of basicTable.data, index as i">
       <td>{{ data.video.file }}</td>
       <td>{{ data.video.size }}</td>
       <td>
         <button (click)="deleteVideo(data.video.id)" nz-button nzType="primary" nzDanger><span nz-icon nzType="delete" nzTheme="outline"></span></button>
+      </td>
+      <td>
+        <div class="upDown">
+          <button nz-button nzType="default" [disabled]="!previousExists(i)" (click)="goUp(i)"><span nz-icon nzType="up" nzTheme="outline"></span></button>
+          <button nz-button nzType="default" [disabled]="!nextExists(i)" (click)="goDown(i)"><span nz-icon nzType="down" nzTheme="outline"></span></button>
+        </div>
       </td>
     </tr>
     <tr>
