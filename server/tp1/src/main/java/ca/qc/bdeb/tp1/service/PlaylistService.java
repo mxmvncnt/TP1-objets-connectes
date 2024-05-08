@@ -55,6 +55,5 @@ public class PlaylistService {
 
     public void updateVideoPosition(int position, int videoId, int deviceId) {
         playlistRepository.updateVideoPosition(position, videoId, deviceId);
-        System.out.println("C'est fait.");
     }
 }

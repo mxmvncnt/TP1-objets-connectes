@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Video } from '../model/video.model';
 import { DataService } from '../../services/data/data.service';
 import { ActivatedRoute } from '@angular/router';
@@ -24,13 +24,16 @@ interface PlayList {
   templateUrl: "./playlist.component.html",
   styleUrl: "./playlist.component.scss",
 })
-export class PlaylistComponent implements OnInit, OnChanges{
+export class PlaylistComponent implements OnInit {
   playList: PlayList[]
   deviceId: number;
   
   fileList: NzUploadFile[] = []
   previewImage: string | undefined = '';
   previewVisible = false;
+
+  videoMovedIndex;
+  videoReplacedIndex;
 
   constructor(
     private dataService: DataService,
@@ -40,16 +43,8 @@ export class PlaylistComponent implements OnInit, OnChanges{
   ngOnInit(): void {
     this.deviceId = this.route.snapshot.params["id"];
     this.getData();
-    
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes.playList)
   }
   
-
-
-
   deleteVideo(id) {
     // this.playList = this.playList.filter((video) => video.id !== id);
     this.playList = this.playList.filter((plistItem) => plistItem.video.id !== id);
@@ -105,7 +100,6 @@ goUp(index: number) {
   this.playList[index].video = this.playList[index - 1].video;
   this.playList[index - 1].video = tmpVideo;
 
-
   // Identify videos permuted indexes
   const videoMovedIndex = index - 1;
   const videoReplacedIndex = index;
@@ -122,10 +116,10 @@ goUp(index: number) {
   const videoMoved = this.playList[videoMovedIndex].video;
   const videoReplaced = this.playList[videoReplacedIndex].video;
 
-  
   this.changeVideoPositionInDb(videoMovedId, videoMovedPosition, videoMoved);
   this.changeVideoPositionInDb(videoReplacedId, videoReplacedPosition, videoReplaced);
 
+  console.log(this.playList);
 }
 
 goDown(index: number) {
