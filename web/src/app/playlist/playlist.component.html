@@ -35,7 +35,9 @@
           nzAccept="video/*"
           [(nzFileList)]="fileList"
           [nzShowButton]="fileList.length < 8"
+          [nzShowUploadList]="showUploadList"
           [nzPreview]="handlePreview"
+          (nzChange)="onChange($event)"
         >
           <div>
             <span nz-icon nzType="plus"></span>

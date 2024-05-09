@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Video } from '../model/video.model';
 import { DataService } from '../../services/data/data.service';
 import { ActivatedRoute } from '@angular/router';
-import { NzUploadFile } from 'ng-zorro-antd/upload';
+import { NzUploadChangeParam, NzUploadFile } from 'ng-zorro-antd/upload';
 import { environment } from '../../environments/environment';
 
 const getBase64 = (file: File): Promise<string | ArrayBuffer | null> =>
@@ -29,6 +29,7 @@ export class PlaylistComponent implements OnInit {
   deviceId: number;
   
   fileList: NzUploadFile[] = []
+  showUploadList = true;
   previewImage: string | undefined = '';
   previewVisible = false;
 
@@ -45,6 +46,14 @@ export class PlaylistComponent implements OnInit {
     this.getData();
   }
   
+  onChange(file: NzUploadChangeParam) {
+    console.log(this.playList);
+    if (file.type === 'success') {
+      this.getData();
+      this.showUploadList = false;
+      console.log(this.playList);
+    }
+  }
   deleteVideo(id) {
     // this.playList = this.playList.filter((video) => video.id !== id);
     this.playList = this.playList.filter((plistItem) => plistItem.video.id !== id);
@@ -52,7 +61,6 @@ export class PlaylistComponent implements OnInit {
     this.dataService
       .deleteData(`/devices/${this.deviceId}/playlist/${id}`)
       .subscribe((data) => {
-        console.log(data);
         console.log("Supprimé avec succès.");
       });
   }
