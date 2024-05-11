@@ -14,7 +14,13 @@
   </thead>
   <tbody>
   <tr *ngFor="let data of basicTable.data">
-    <td>{{ data.name }}</td>
+    <!-- <td>{{ data.name }}</td> -->
+    <td> 
+      <div class="editable-cell" [hidden]="editId === data.id" (click)="startEdit(data.id)">
+        {{ data.name }}
+      </div>
+      <input [hidden]="editId !== data.id" type="text" nz-input [(ngModel)]="data.name" (blur)="stopEdit(data.id, data.name)" />
+    </td>
     <td>{{ data.location }}</td>
     <td>{{ data.isLost ? 'Oui' : 'Non' }}</td>
     <td>

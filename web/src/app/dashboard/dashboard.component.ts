@@ -12,6 +12,7 @@ import {da_DK} from "ng-zorro-antd/i18n";
 
 export class DashBoardComponent implements OnInit {
   listOfData: Device[] = [];
+  editId: string | null = null;
 
   constructor(private dataService: DataService) { }
 
@@ -41,5 +42,20 @@ export class DashBoardComponent implements OnInit {
       .subscribe(data => {
         device.isLost = !device.isLost;
       });
+  }
+
+  startEdit(id: string): void {
+    this.editId = id;
+  }
+
+  stopEdit(deviceId, deviceNewName): void {
+    this.editId = null;
+    console.log(deviceNewName);
+    this.dataService.patchData(`/devices/${deviceId}/${deviceNewName}/`, deviceNewName).subscribe(
+      (data) => {
+        console.log("Mise à jour du nom effectuée");
+        console.log(this.listOfData);
+      }
+    )
   }
 }

@@ -21,4 +21,6 @@ public class DeviceService {
     public void setDeviceLost(int deviceId, boolean lostStatus) {
         repository.setLostStatus(deviceId, lostStatus);
     }
+
+    public void updateDeviceName(int deviceId, String newName) { repository.updateDeviceName(deviceId, newName); }
 }
