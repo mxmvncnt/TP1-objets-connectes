@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin()
 @RestController
@@ -87,5 +89,29 @@ public class DeviceController {
             @PathVariable String deviceNewLocation
     ) {
         deviceService.updateDeviceLocation(deviceId, deviceNewLocation);
+    }
+
+    /**
+     * @param deviceId ID of the device
+     * @param body     JSON Body: <br>
+     *                 "is_playing": Boolean <br>
+     *                 "videos": [ <br>
+     *                 { <br>
+     *                 "id": Integer, <br>
+     *                 "start": String (Date), <br>
+     *                 "end": String (Date) <br>
+     *                 { <br>
+     *                 ] <br>
+     * @throws ParseException
+     */
+    @PostMapping("/devices/{deviceId}/status")
+    public void updateDeviceStatus(
+            @PathVariable int deviceId,
+            @RequestBody Map<String, Object> body) throws ParseException {
+        Boolean isPlaying = (Boolean) body.get("is_playing");
+        List<Map<String, Object>> videosMap = (List<Map<String, Object>>) body.get("videos");
+        List<Video> videos = deviceService.getVideosFromId(videosMap.stream().filter(video -> video.get("id") != null).map(video -> (Integer) video.get("id")).toList());
+
+        videoService.addHistoryEntries(videosMap, videos);
     }
 }

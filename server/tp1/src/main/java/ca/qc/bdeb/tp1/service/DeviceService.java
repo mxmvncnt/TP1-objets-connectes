@@ -1,28 +1,38 @@
 package ca.qc.bdeb.tp1.service;
 
 import ca.qc.bdeb.tp1.data.entity.Device;
+import ca.qc.bdeb.tp1.data.entity.Video;
 import ca.qc.bdeb.tp1.data.repository.DeviceRepository;
+import ca.qc.bdeb.tp1.data.repository.VideoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class DeviceService {
-    private final DeviceRepository repository;
+    private final DeviceRepository deviceRepository;
+    private final VideoRepository videoRepository;
 
-    public DeviceService(DeviceRepository repository) {
-        this.repository = repository;
+    public DeviceService(
+            DeviceRepository repository,
+            VideoRepository videoRepository) {
+        this.deviceRepository = repository;
+        this.videoRepository = videoRepository;
     }
 
     public List<Device> getAllDevices() {
-        return repository.findAll();
+        return deviceRepository.findAll();
     }
 
     public void setDeviceLost(int deviceId, boolean lostStatus) {
-        repository.setLostStatus(deviceId, lostStatus);
+        deviceRepository.setLostStatus(deviceId, lostStatus);
     }
 
-    public void updateDeviceName(int deviceId, String newName) { repository.updateDeviceName(deviceId, newName); }
+    public List<Video> getVideosFromId(List<Integer> videoIds) {
+        return videoRepository.findAllById(videoIds);
+    }
 
-    public void updateDeviceLocation(int deviceId, String newLocation) { repository.updateDeviceLocation(deviceId, newLocation); }
+    public void updateDeviceName(int deviceId, String newName) { deviceRepository.updateDeviceName(deviceId, newName); }
+
+    public void updateDeviceLocation(int deviceId, String newLocation) { deviceRepository.updateDeviceLocation(deviceId, newLocation); }
 }
