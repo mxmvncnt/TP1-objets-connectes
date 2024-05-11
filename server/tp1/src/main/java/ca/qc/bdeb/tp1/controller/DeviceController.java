@@ -74,11 +74,18 @@ public class DeviceController {
         playlistService.updateVideoPosition(position, videoId, deviceId);
     }
 
-    @PatchMapping("/devices/{deviceId}/{deviceNewName}/")
+    @PatchMapping("/devices/{deviceId}/editName/{deviceNewName}/")
     public void updateDeviceName(
             @PathVariable int deviceId,
             @PathVariable String deviceNewName) {
         deviceService.updateDeviceName(deviceId, deviceNewName);
     }
 
+    @PatchMapping("/devices/{deviceId}/editLocation/{deviceNewLocation}")
+    public void updateDeviceLocation(
+            @PathVariable int deviceId,
+            @PathVariable String deviceNewLocation
+    ) {
+        deviceService.updateDeviceLocation(deviceId, deviceNewLocation);
+    }
 }

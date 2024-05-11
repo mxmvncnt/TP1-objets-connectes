@@ -16,12 +16,17 @@
   <tr *ngFor="let data of basicTable.data">
     <!-- <td>{{ data.name }}</td> -->
     <td> 
-      <div class="editable-cell" [hidden]="editId === data.id" (click)="startEdit(data.id)">
+      <div class="editable-cell" [hidden]="editId === data.id" (click)="startEdit(data.id, 'name')">
         {{ data.name }}
       </div>
-      <input [hidden]="editId !== data.id" type="text" nz-input [(ngModel)]="data.name" (blur)="stopEdit(data.id, data.name)" />
+      <input [hidden]="editId !== data.id" type="text" nz-input [(ngModel)]="data.name" (blur)="stopEdit(data.id, data.name, 'name')" />
     </td>
-    <td>{{ data.location }}</td>
+    <td>
+      <div class="editable-cell" [hidden]="editLocationId === data.id" (click)="startEdit(data.id, 'location')">
+        {{ data.location }}
+      </div>
+      <input [hidden]="editLocationId !== data.id" type="text" nz-input [(ngModel)]="data.location" (blur)="stopEdit(data.id, data.location, 'location')" />
+    </td>
     <td>{{ data.isLost ? 'Oui' : 'Non' }}</td>
     <td>
       <button nz-button nzType="secondary" (click)="toggleDeviceLost(data)" onclick="deviceLost()">Localiser</button>

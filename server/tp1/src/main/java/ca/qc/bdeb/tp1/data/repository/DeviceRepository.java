@@ -21,5 +21,9 @@ public interface DeviceRepository extends JpaRepository<Device, Integer>{
     @Transactional
     @Query("UPDATE Device d set d.name = :newName WHERE d.id = :deviceId")
     void updateDeviceName(@Param("deviceId") int deviceId, @Param("newName") String newName);
-    
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Device d set d.location = :newLocation WHERE d.id = :deviceId")
+    void updateDeviceLocation(@Param("deviceId") int deviceId, @Param("newLocation") String newLocation);
 }

@@ -23,4 +23,6 @@ public class DeviceService {
     }
 
     public void updateDeviceName(int deviceId, String newName) { repository.updateDeviceName(deviceId, newName); }
+
+    public void updateDeviceLocation(int deviceId, String newLocation) { repository.updateDeviceLocation(deviceId, newLocation); }
 }

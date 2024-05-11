@@ -13,6 +13,7 @@ import {da_DK} from "ng-zorro-antd/i18n";
 export class DashBoardComponent implements OnInit {
   listOfData: Device[] = [];
   editId: string | null = null;
+  editLocationId: string | null = null;
 
   constructor(private dataService: DataService) { }
 
@@ -44,16 +45,40 @@ export class DashBoardComponent implements OnInit {
       });
   }
 
-  startEdit(id: string): void {
-    this.editId = id;
+  startEdit(id: string, deviceInfo): void {
+    if (deviceInfo === 'location') { 
+      this.editLocationId = id;
+    }
+    else if (deviceInfo === 'name') { 
+      this.editId = id;
+    }
   }
 
-  stopEdit(deviceId, deviceNewName): void {
-    this.editId = null;
-    console.log(deviceNewName);
-    this.dataService.patchData(`/devices/${deviceId}/${deviceNewName}/`, deviceNewName).subscribe(
+  stopEdit(deviceId, value, deviceInfo): void {
+    if (deviceInfo === 'location') {
+      this.editLocationId = null;
+      this.changeDeviceLocation(deviceId, value);
+    }
+    else if (deviceInfo === 'name') {
+      this.editId = null;
+      this.changeDeviceName(deviceId, value);
+    }
+  }
+
+  changeDeviceName(deviceId: number, newValue: string) {
+    
+    this.dataService.patchData(`/devices/${deviceId}/editName/${newValue}/`, deviceId).subscribe(
       (data) => {
-        console.log("Mise à jour du nom effectuée");
+        console.log("Mise à jour éffectuée");
+        console.log(this.listOfData);
+      }
+    )
+  }
+  changeDeviceLocation(deviceId: number, newValue: string) {
+    console.log('Change device loc')
+    this.dataService.patchData(`/devices/${deviceId}/editLocation/${newValue}`, deviceId).subscribe(
+      (data) => {
+        console.log("Mise à jour éffectuée");
         console.log(this.listOfData);
       }
     )
