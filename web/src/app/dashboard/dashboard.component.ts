@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Device} from '../model/device.model';
 
 import {DataService} from "../../services/data/data.service";
@@ -10,16 +10,21 @@ import {da_DK} from "ng-zorro-antd/i18n";
   styleUrl: './dashboard.component.scss'
 })
 
-export class DashBoardComponent implements OnInit {
+export class DashBoardComponent implements OnInit, OnDestroy {
   listOfData: Device[] = [];
   editId: string | null = null;
   editLocationId: string | null = null;
-
+  updateIntervalRef: any;
+  
   constructor(private dataService: DataService) { }
 
   ngOnInit(): void {
     this.getData();
+    
+    // Update interface each 5 sec
+    this.updateIntervalRef = setInterval(() => {this.getData(); console.log('DashBoard updated')}, (5 * 1000));
   }
+
 
   getData(): void {
     this.dataService.getData("/devices")
@@ -82,5 +87,9 @@ export class DashBoardComponent implements OnInit {
         console.log(this.listOfData);
       }
     )
+  }
+
+  ngOnDestroy(): void {
+    clearInterval(this.updateIntervalRef);
   }
 }
