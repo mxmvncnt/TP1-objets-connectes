@@ -46,10 +46,12 @@ def add_video():
         ordre=data.get("ordre")
     )
 
+
 @app.post("/video/replace")
-def add_video():
+def replace_videos():
     data = request.form
     return video.replace_all(data)
+
 
 @app.delete("/video/<video_id>/remove")
 def remove_video(video_id):
