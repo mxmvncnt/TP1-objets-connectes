@@ -62,6 +62,11 @@ class VideoController:
 
         self.display_stats()
 
+        # Led on_off thread
+        self.led_on_off_thread = threading.Thread(target=self.start_led_on_off, daemon=True)
+        self.led_on_off_thread.start()
+
+        
     def create_gui(self, root):
         self.root = root
         # setting title
@@ -179,11 +184,10 @@ class VideoController:
 
     def bouton_localisation_arret_command(self):
         print("localisation/arret clicked")
-        if self.video_display is not None:
-            if not self.led_blinking:
-                self.start_led_blinking_thread()
-            else:
-                self.stop_led_blinking_thread()
+        if not self.led_blinking:
+            self.start_led_blinking_thread()
+        else:
+            self.stop_led_blinking_thread()
 
     def play_next_video(self):
         if self.video_display is not None:
@@ -211,10 +215,6 @@ class VideoController:
             self.video_display = None
             self.titre_video_gui.set("")
 
-            if sensor_found:
-                if self.led_blinking:
-                    self.stop_led_blinking_thread()
-
     def play(self, wait: bool, video: Video):
         if wait:
             print("waiting for delay...")
@@ -226,7 +226,6 @@ class VideoController:
             self.current_video = video
             self.titre_video_gui.set(
                 self.current_video.fichier.split(f"{os.path.dirname(os.path.realpath(__file__))}/videos/")[1])
-            self.start_led_turn_on_thread()
 
     def bouton_play(self):
         if self.video_display is None:
@@ -235,25 +234,29 @@ class VideoController:
     def start_gpio(self):
         if sensor_found:
             self.sensor.loop()
+        
+    def start_sensor(self):
+            self.sensor.loop()
 
-    # def start_led_turn_on_thread(self):
-    #     self.led_blinking = True
-    #     if sensor_found:
-    #         self.led_thread = threading.Thread(target=self.led_on_video, daemon=True)
-    #         self.led_thread.start()
+    def start_led_on_off(self):
+        if sensor_found:
+            while True:
+                if not self.led_blinking:
+                    if self.video_display is not None:
+                        self.sensor.turn_on_led()
+                    else:
+                        self.sensor.turn_off_led()
 
     def start_led_blinking_thread(self):
         self.led_blinking = True
+        self.led_thread = None
         if sensor_found:
             self.led_thread = threading.Thread(target=self.led_blink, daemon=True)
             self.led_thread.start()
 
     def stop_led_blinking_thread(self):
         self.led_blinking = False
-        if sensor_found:
-            if self.led_thread is not None:
-                self.led_thread.join()
-                self.led_thread = None
+        self.led_thread = None
 
     def led_blink(self):
         if sensor_found:
@@ -262,13 +265,6 @@ class VideoController:
                 time.sleep(0.5)
                 self.sensor.turn_off_led()
                 time.sleep(0.5)
-
-    # def led_on_video(self):
-    #     if sensor_found:
-    #         while self.video_display is not None:
-    #             self.sensor.turn_on_led()
-
-    #         self.sensor.turn_off_led()
 
     def handle_motion_detection(self):
         self.text_detection_motion.set("Oui")
