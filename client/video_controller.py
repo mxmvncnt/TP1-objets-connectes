@@ -332,11 +332,10 @@ class VideoController:
                         headers=headers
                     )
 
+                    filename = missing_video.headers.get("Content-Disposition").split("attachment; filename=")[1]
                     missing_video = missing_video.content
 
-                    print(missing_video)
-
-                    f = open(missing_video.get("name"), "w")
+                    f = open(f"{os.path.dirname(os.path.realpath(__file__))}/videos/{filename}", "wb")
                     f.write(missing_video)
                     f.close()
 
