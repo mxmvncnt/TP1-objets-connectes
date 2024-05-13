@@ -48,6 +48,22 @@ class PlayList:
                     videos.append(video)
         return videos
 
+    def fetch_videos_from_json(self, json_data):
+        videos_objets = []
+
+        for video in json_data:
+            new_video = Video(
+                id=video.get('id'),
+                fichier=video.get('file'),
+                taille=video.get('size'),
+                ordre=1,
+                md5=video.get('md5')
+            )
+
+            videos_objets.append(new_video)
+
+        return videos_objets
+
     def next_video(self) -> Video:
         if self._current_video_index + 1 < len(self._videos):
             self._current_video_index += 1

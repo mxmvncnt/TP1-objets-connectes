@@ -24,6 +24,10 @@ public class DeviceService {
         return deviceRepository.findAll();
     }
 
+    public Device getDeviceFromId(int id) {
+        return deviceRepository.findById(id).get();
+    }
+
     public void setDeviceLost(int deviceId, boolean lostStatus) {
         deviceRepository.setLostStatus(deviceId, lostStatus);
     }

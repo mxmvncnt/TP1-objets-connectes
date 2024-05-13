@@ -6,6 +6,7 @@ import ca.qc.bdeb.tp1.data.repository.HistoryRepository;
 import ca.qc.bdeb.tp1.data.repository.VideoRepository;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

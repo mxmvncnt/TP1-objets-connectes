@@ -1,5 +1,6 @@
 import json
 import os
+import threading
 
 from flask import Flask, request
 
@@ -46,6 +47,17 @@ def add_video():
     )
 
 
+@app.post("/video/replace")
+def replace_videos():
+    data = request.form
+    return video.replace_all(data)
+
+
+@app.delete("/video/<video_id>/remove")
+def remove_video(video_id):
+    return video.remove_video(video_id)
+
+
 @app.post("/historique/add")
 def add_historique():
     data = request.form
@@ -70,6 +82,16 @@ def add_lecture():
         fin=int(data.get("fin"))
     )
 
+
+@app.get("/lecture/unsaved")
+def get_lectures():
+    return lecture.get_list()
+
+
+@app.delete("/historique/purge")
+def purge_history():
+    lecture.delete_all()
+    historique.delete_all()
 
 
 if __name__ == '__main__':

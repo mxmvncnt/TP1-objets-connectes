@@ -1,3 +1,5 @@
+from typing import List
+
 from api.database.models import Video, to_json
 
 
@@ -16,3 +18,17 @@ def add_video(fichier, taille, md5, ordre):
     video.save()
     return f"Video ajoutée avec le ID {video.id}"
 
+
+def remove_all():
+    Video.delete()
+
+
+def remove_video(video_id):
+    video = Video.select().where(Video.id == video_id)
+
+
+def replace_all(videos_json: List[Video]):
+    videos = [Video(**data) for data in videos_json]
+    for video in videos:
+        new_video = Video(ficher=video.fichier, taille=video.taille, md5=video.md5, ordre=video.ordre)
+        new_video.save()

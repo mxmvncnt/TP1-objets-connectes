@@ -1,3 +1,4 @@
+import json
 import os
 import threading
 import time
@@ -13,20 +14,19 @@ from video_display import VideoDisplay
 
 try:
     from sensor import Sensor
+
     sensor_found: bool = True
 except (RuntimeError, ModuleNotFoundError) as e:
     print("Could not load Sensor module because the device does not support GPIO.")
     sensor_found: bool = False
 finally:
     pass
-   
 
 FONT_SIZE = 12
 
 
 class VideoController:
     def __init__(self, root: tk.Tk, play_list: PlayList):
-
 
         self.titre_video_gui = tk.StringVar()
         self.count_today = tk.StringVar()
@@ -56,12 +56,15 @@ class VideoController:
         self.th_gpio = threading.Thread(target=self.start_gpio, daemon=True)
         self.th_gpio.start()
 
+        # Thread loop de requetes 60 secondes
+        self.th_loop = threading.Thread(target=self.send_watch_data_loop, daemon=True)
+        self.th_loop.start()
+
         self.display_stats()
 
         # Led on_off thread
         self.led_on_off_thread = threading.Thread(target=self.start_led_on_off, daemon=True)
         self.led_on_off_thread.start()
-        self.led_is_on = False
 
         
     def create_gui(self, root):
@@ -258,10 +261,10 @@ class VideoController:
     def led_blink(self):
         if sensor_found:
             while self.led_blinking:
-                    self.sensor.turn_on_led()
-                    time.sleep(0.5)
-                    self.sensor.turn_off_led()
-                    time.sleep(0.5)
+                self.sensor.turn_on_led()
+                time.sleep(0.5)
+                self.sensor.turn_off_led()
+                time.sleep(0.5)
 
     def handle_motion_detection(self):
         self.text_detection_motion.set("Oui")
@@ -287,3 +290,56 @@ class VideoController:
         )
 
         self.display_stats()
+
+    def send_watch_data_loop(self):
+        headers = {'Content-type': 'application/json'}
+
+        time.sleep(1)
+        print("sending watch data")
+        unsaved_videos = requests.get(url=f"{os.getenv('API_URL')}/lecture/unsaved")
+
+        save_request = requests.post(
+            url=f"{os.getenv('SERVER_URL')}/devices/{s.DEVICE_ID}/status",
+            data=json.dumps({"is_playing": self.current_video is not None, "videos": json.loads(unsaved_videos.content)}),
+            headers=headers
+        )
+
+        # The history has been saved on the backend server, we delete it on the device.
+        if save_request.status_code == 200:
+            print("save successful: removing history from device")
+            requests.delete(
+                url=f"{os.getenv('API_URL')}/historique/purge",
+                headers=headers
+            )
+
+        response = json.loads(save_request.content)
+        if response.get("object_is_lost"):
+            self.led_blink()
+
+        if response["videos"]:
+            received_videos = response.get("videos")
+            received_videos_object = self.play_list.fetch_videos_from_json(received_videos)
+
+            videos_on_device = self.play_list.fetch_videos()
+
+            # download missing videos
+            for received_video in received_videos_object:
+                if received_video not in videos_on_device:
+                    print(f"downloading: {received_video.fichier}")
+
+                    missing_video = requests.get(
+                        url=f"{os.getenv('SERVER_URL')}/videos/{received_video.id}/download",
+                        headers=headers
+                    )
+
+                    missing_video = missing_video.content
+
+                    print(missing_video)
+
+                    f = open(missing_video.get("name"), "w")
+                    f.write(missing_video)
+                    f.close()
+
+            # replace database table with incoming videos
+
+        self.send_watch_data_loop()
