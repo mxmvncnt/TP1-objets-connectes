@@ -300,57 +300,13 @@ class VideoController:
 
         time.sleep(1)
         print("sending watch data")
-        unsaved_videos = requests.get(url=f"{os.getenv('API_URL')}/lecture/unsaved")
+        response = self.play_list.get_playlist_from_backend()
 
-        save_request = requests.post(
-            url=f"{os.getenv('SERVER_URL')}/devices/{s.DEVICE_ID}/status",
-            data=json.dumps(
-                {"is_playing": self.current_video is not None, "videos": json.loads(unsaved_videos.content)}),
-            headers=headers
-        )
-
-        # The history has been saved on the backend server, we delete it on the device.
-        if save_request.status_code == 200:
-            print("save successful: removing history from device")
-            requests.delete(
-                url=f"{os.getenv('API_URL')}/historique/purge",
-                headers=headers
-            )
-
-        response = json.loads(save_request.content)
         if response.get("object_is_lost"):
             self.led_blink()
 
-        if response["videos"]:
+        if response.get("videos"):
             received_videos = response.get("videos")
-            received_videos_object = self.play_list.fetch_videos_from_json(received_videos)
-
-            videos_on_device = self.play_list.fetch_videos()
-
-            # download missing videos
-            for received_video in received_videos_object:
-                if received_video not in videos_on_device:
-                    print(f"downloading: {received_video.fichier}")
-
-                    missing_video = requests.get(
-                        url=f"{os.getenv('SERVER_URL')}/videos/{received_video.id}/download",
-                        headers=headers
-                    )
-
-                    filename = missing_video.headers.get("Content-Disposition").split("attachment; filename=")[1]
-                    missing_video = missing_video.content
-
-                    f = open(f"{os.path.dirname(os.path.realpath(__file__))}/videos/{filename}", "wb")
-                    f.write(missing_video)
-                    f.close()
-
-                    videos_on_device.append(received_video)
-
-            # replace database table with incoming videos
-            requests.post(
-                url=f"{os.getenv('API_URL')}/video/replace",
-                data={"videos": [received_videos_object]},
-                headers=headers
-            )
+            self.play_list.download_videos_from_backend(received_videos)
 
         self.send_watch_data_loop()
