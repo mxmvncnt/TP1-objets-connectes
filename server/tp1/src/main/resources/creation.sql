@@ -26,6 +26,7 @@ create table history
     end      datetime not null comment 'when the video stopped playing',
     constraint history_video_id_fk
         foreign key (video_id) references video (id)
+            on delete cascade
 );
 
 create table playlist
@@ -36,8 +37,10 @@ create table playlist
     video_id  int not null comment 'ID of the video',
     position  int not null comment 'position of the video in the playlist',
     constraint playlist_device_id_fk
-        foreign key (device_id) references device (id),
+        foreign key (device_id) references device (id)
+            on delete cascade,
     constraint playlist_video_id_fk
         foreign key (video_id) references video (id)
+            on delete cascade
 );
 
