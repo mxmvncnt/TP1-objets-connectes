@@ -340,5 +340,10 @@ class VideoController:
                     f.close()
 
             # replace database table with incoming videos
+            requests.post(
+                url=f"{os.getenv('API_URL')}/video/replace",
+                data={"videos": [received_videos_object]},
+                headers=self.headers
+            )
 
         self.send_watch_data_loop()
