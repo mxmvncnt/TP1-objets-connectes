@@ -50,7 +50,7 @@ def add_video():
 @app.post("/video/replace")
 def replace_videos():
     data = request.form
-    return video.replace_all(data)
+    return video.replace_all(data.get("videos"))
 
 
 @app.delete("/video/<video_id>/remove")
