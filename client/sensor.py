@@ -30,9 +30,14 @@ class Sensor:
         GPIO.cleanup()
 
     def turn_on_led(self):
-        print('Led on')
-        GPIO.output(self.ledPin,GPIO.HIGH)
+        try:
+            GPIO.output(self.ledPin,GPIO.HIGH)
+        except KeyboardInterrupt:
+            self.destroy()
+
 
     def turn_off_led(self):
-        print('Led off')
-        GPIO.output(self.ledPin,GPIO.LOW)
+        try:
+            GPIO.output(self.ledPin,GPIO.LOW)
+        except KeyboardInterrupt:
+            self.destroy()
