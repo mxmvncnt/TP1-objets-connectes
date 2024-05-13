@@ -76,7 +76,6 @@ public class StorageService {
 
         return ResponseEntity.ok()
                 .headers(headers)
-                .contentLength(video.getFile().length())
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(content);
     }
