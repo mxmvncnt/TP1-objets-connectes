@@ -1,4 +1,5 @@
 from typing import List
+from api.database import models
 
 from api.database.models import Video, to_json
 
@@ -14,9 +15,20 @@ def get_by_id(video_id):
 
 
 def add_video(fichier, taille, md5, ordre):
-    video = Video(ficher=fichier, taille=taille, md5=md5, ordre=ordre)
-    video.save()
-    return f"Video ajoutée avec le ID {video.id}"
+    if taille == None:
+        taille = 0
+
+    if ordre == None:
+        ordre = 1
+
+    models.db.execute_sql(
+        """
+        INSERT INTO
+        video (fichier, taille, md5, ordre)
+        VALUES (%s, %s, %s, %s)""",
+        [fichier, int(taille), md5, int(ordre)])
+
+    return "Ajoute une entree"
 
 
 def remove_all():
@@ -28,7 +40,11 @@ def remove_video(video_id):
 
 
 def replace_all(videos_json: List[Video]):
+    print("REPLACE ALL VIDEOS BY:")
+    print("REPLACE ALL VIDEOS BY:")
+    print("REPLACE ALL VIDEOS BY:")
+    print("REPLACE ALL VIDEOS BY:")
+    print(videos_json)
     videos = [Video(**data) for data in videos_json]
     for video in videos:
-        new_video = Video(ficher=video.fichier, taille=video.taille, md5=video.md5, ordre=video.ordre)
-        new_video.save()
+        add_video(video.fichier, video.taille, video.md5, video.ordre)

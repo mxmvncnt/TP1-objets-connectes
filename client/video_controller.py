@@ -294,13 +294,19 @@ class VideoController:
     def send_watch_data_loop(self):
         headers = {'Content-type': 'application/json'}
 
-        time.sleep(1)
         print("sending watch data")
         unsaved_videos = requests.get(url=f"{os.getenv('API_URL')}/lecture/unsaved")
+        unsaved_video_json = json.loads(unsaved_videos.content)
+
+        try:    
+            if unsaved_video_json.get("message") == "Aucun r\u00e9sultat trouv\u00e9":
+                unsaved_video_json = []
+        except:
+            print("KABOOOOOOM!!!")
 
         save_request = requests.post(
             url=f"{os.getenv('SERVER_URL')}/devices/{s.DEVICE_ID}/status",
-            data=json.dumps({"is_playing": self.current_video is not None, "videos": json.loads(unsaved_videos.content)}),
+            data=json.dumps({"is_playing": self.current_video is not None, "videos": unsaved_video_json}),
             headers=headers
         )
 
@@ -309,10 +315,10 @@ class VideoController:
             print("save successful: removing history from device")
             requests.delete(
                 url=f"{os.getenv('API_URL')}/historique/purge",
-                headers=headers
             )
 
         response = json.loads(save_request.content)
+
         if response.get("object_is_lost"):
             self.led_blink()
 
@@ -322,9 +328,13 @@ class VideoController:
 
             videos_on_device = self.play_list.fetch_videos()
 
+            print(received_videos_object)
+            print(videos_on_device)
+
             # download missing videos
             for received_video in received_videos_object:
                 if received_video not in videos_on_device:
+                    # if any(isinstance(received_video, Video) and received_video == )
                     print(f"downloading: {received_video.fichier}")
 
                     missing_video = requests.get(
@@ -339,11 +349,27 @@ class VideoController:
                     f.write(missing_video)
                     f.close()
 
-            # replace database table with incoming videos
-            requests.post(
-                url=f"{os.getenv('API_URL')}/video/replace",
-                data={"videos": [received_videos_object]},
-                headers=self.headers
-            )
+                    print("adding new video to database")
+                    requests.post(
+                        url=f"{os.getenv('API_URL')}/video/add",
+                        data={
+                            "fichier": received_video.fichier,
+                            "taille": received_video.taille,
+                            "md5": received_video.md5,
+                            "ordre": 1,
+                        },
+                    )
+                    print("done")
 
+
+            # replace database table with incoming videos
+            for video_on_device in videos_on_device:
+                if video_on_device not in received_videos_object:
+                    print("deleting video from database")
+                    requests.delete(
+                        url=f"{os.getenv('API_URL')}/video/{received_video.id}/remove",
+                    )
+                    print("done")
+
+        time.sleep(60)
         self.send_watch_data_loop()
