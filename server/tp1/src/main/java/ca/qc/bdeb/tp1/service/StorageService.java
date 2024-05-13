@@ -1,26 +1,31 @@
 package ca.qc.bdeb.tp1.service;
 
-import ca.qc.bdeb.tp1.data.entity.Device;
 import ca.qc.bdeb.tp1.data.entity.Video;
-import ca.qc.bdeb.tp1.data.repository.DeviceRepository;
+import ca.qc.bdeb.tp1.data.repository.VideoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.mock.web.MockMultipartFile;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
 
 @Service
 public class StorageService {
+    private final VideoService videoService;
+    private final VideoRepository videoRepository;
+
+    public StorageService(
+            VideoService videoService,
+            VideoRepository videoRepository) {
+        this.videoService = videoService;
+        this.videoRepository = videoRepository;
+    }
+
     public void save(MultipartFile file) throws IOException {
         Path projectRootDir = Paths.get("").toAbsolutePath();
 
@@ -52,6 +57,23 @@ public class StorageService {
         video.setSize((int) file.getSize());
         video.setMd5(calculateMD5(filePath));
         return video;
+    }
+
+    public MultipartFile getFile(Integer videoId) throws IOException {
+        Path projectRootDir = Paths.get("").toAbsolutePath();
+        Path folderPath = projectRootDir.resolve("saved_videos");
+
+        Video video = videoRepository.findById(videoId).get();
+
+        Path videoPath = folderPath.resolve(video.getFile());
+
+        byte[] content = null;
+        try {
+            content = Files.readAllBytes(videoPath);
+        } catch (IOException e) {
+        }
+
+        return new MockMultipartFile(video.getFile(), Files.readAllBytes(videoPath));
     }
 
     private String calculateMD5(Path filePath) throws IOException {

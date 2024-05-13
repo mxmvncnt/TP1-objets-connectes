@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -105,7 +106,7 @@ public class DeviceController {
      * @throws ParseException
      */
     @PostMapping("/devices/{deviceId}/status")
-    public void updateDeviceStatus(
+    public Map<String, Object> updateDeviceStatus(
             @PathVariable int deviceId,
             @RequestBody Map<String, Object> body) throws ParseException {
         Boolean isPlaying = (Boolean) body.get("is_playing");
@@ -113,5 +114,20 @@ public class DeviceController {
         List<Video> videos = deviceService.getVideosFromId(videosMap.stream().filter(video -> video.get("id") != null).map(video -> (Integer) video.get("id")).toList());
 
         videoService.addHistoryEntries(videosMap, videos);
+
+        Device device = deviceService.getDeviceFromId(deviceId);
+
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("object_name", device.getName());
+        response.put("object_location", device.getLocation());
+        response.put("object_is_lost", device.isLost());
+        response.put("videos", playlistService.getPlaylist(deviceId));
+
+        return response;
+    }
+
+    @GetMapping("/videos/{videoId}/download")
+    public MultipartFile getVideoFile(@PathVariable int videoId) throws IOException {
+        return storageService.getFile(videoId);
     }
 }
