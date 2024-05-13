@@ -29,7 +29,7 @@ class PlayList:
         return self._videos[self._current_video_index]
 
     def videos_exist(self):
-        return len(self._videos) != 0
+        return len(self._videos) > 0
 
     def fetch_videos(self):
         videos_db_response = requests.get(f"{os.getenv('API_URL')}/video/list")
