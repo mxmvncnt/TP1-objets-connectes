@@ -6,6 +6,9 @@ import ca.qc.bdeb.tp1.service.DeviceService;
 import ca.qc.bdeb.tp1.service.PlaylistService;
 import ca.qc.bdeb.tp1.service.StorageService;
 import ca.qc.bdeb.tp1.service.VideoService;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -127,7 +130,7 @@ public class DeviceController {
     }
 
     @GetMapping("/videos/{videoId}/download")
-    public MultipartFile getVideoFile(@PathVariable int videoId) throws IOException {
+    public ResponseEntity<Resource> getVideoFile(@PathVariable int videoId) throws IOException {
         return storageService.getFile(videoId);
     }
 }

@@ -2,12 +2,15 @@ package ca.qc.bdeb.tp1.service;
 
 import ca.qc.bdeb.tp1.data.entity.Video;
 import ca.qc.bdeb.tp1.data.repository.VideoRepository;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.mock.web.MockMultipartFile;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -59,7 +62,7 @@ public class StorageService {
         return video;
     }
 
-    public MultipartFile getFile(Integer videoId) throws IOException {
+    public ResponseEntity<Resource> getFile(Integer videoId) throws IOException {
         Path projectRootDir = Paths.get("").toAbsolutePath();
         Path folderPath = projectRootDir.resolve("saved_videos");
 
@@ -67,13 +70,15 @@ public class StorageService {
 
         Path videoPath = folderPath.resolve(video.getFile());
 
-        byte[] content = null;
-        try {
-            content = Files.readAllBytes(videoPath);
-        } catch (IOException e) {
-        }
+        ByteArrayResource content = new ByteArrayResource(Files.readAllBytes(videoPath));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + videoPath.getFileName());
 
-        return new MockMultipartFile(video.getFile(), Files.readAllBytes(videoPath));
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(video.getFile().length())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(content);
     }
 
     private String calculateMD5(Path filePath) throws IOException {
