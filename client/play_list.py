@@ -17,11 +17,9 @@ class PlayList:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance._videos = []
+            # cls._instance._videos = cls._instance.fetch_videos()  # Charger les vidéos selon l'ordre
+            cls._instance._videos_remote = cls._instance.download_videos_from_backend(cls._instance.get_playlist_from_backend())  # Charger les vidéos selon l'ordre
             cls._instance._current_video_index = 0
-
-            cls._instance._videos = cls._instance.fetch_videos()  # Charger les vidéos selon l'ordre
-            if len(cls._instance._videos) == 0:
-                cls._instance._videos = cls._instance.download_videos_from_backend(cls._instance.get_playlist_from_backend())
         return cls._instance
 
     @property
@@ -38,11 +36,13 @@ class PlayList:
     def fetch_videos(self):
         videos_db_response = requests.get(f"{os.getenv('API_URL')}/video/list")
         videos_db_json = videos_db_response.json()
+        print(videos_db_json)
 
-        if videos_db_json.get("message") == 'Aucun résultat trouvé':
-            return []
+        videos_db = []
 
-        videos_db = [Video(**data) for data in videos_db_json]
+        if videos_db_json.get("message") != "Aucun résultat trouvé":
+            print("hellko")
+            videos_db = [Video(**data) for data in videos_db_json]
 
         videos = []
         vids_folder = f"{os.path.dirname(os.path.realpath(__file__))}/videos"
@@ -63,7 +63,7 @@ class PlayList:
         save_request = requests.post(
             url=f"{os.getenv('SERVER_URL')}/devices/{s.DEVICE_ID}/status",
             data=json.dumps(
-                {"is_playing": self.current_video is not None, "videos": json.loads(unsaved_videos.content)}),
+                {"is_playing": self.current_video != 0, "videos": json.loads(unsaved_videos.content)}),
             headers=self.headers
         )
 
@@ -78,7 +78,10 @@ class PlayList:
         return json.loads(save_request.content)
 
     def download_videos_from_backend(self, received_videos):
+        print(received_videos)
+
         received_videos_object = self.fetch_videos_from_json(received_videos)
+        print(received_videos_object)
         videos_on_device = self.fetch_videos()
 
         # download missing videos
