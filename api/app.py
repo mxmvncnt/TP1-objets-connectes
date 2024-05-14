@@ -39,6 +39,9 @@ def get_count_today():
 @app.post("/video/add")
 def add_video():
     data = request.form
+    print("VIDEO DATA FORM:::::::")
+    print(data)
+    print(request)
     return video.add_video(
         fichier=data.get("fichier"),
         taille=data.get("taille"),
@@ -50,7 +53,7 @@ def add_video():
 @app.post("/video/replace")
 def replace_videos():
     data = request.form
-    return video.replace_all(data)
+    return video.replace_all(data.get("videos"))
 
 
 @app.delete("/video/<video_id>/remove")

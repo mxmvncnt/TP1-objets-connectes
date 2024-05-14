@@ -24,4 +24,4 @@ def get_list():
 
 
 def delete_all():
-    lectures = Lecture.delete()
+    models.db.execute_sql("DELETE FROM lecture")

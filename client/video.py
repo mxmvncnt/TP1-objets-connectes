@@ -8,3 +8,6 @@ class Video:
 
     def __str__(self):
         return f'{self.fichier}'
+
+    def __eq__(self, other):
+        return self.id == other.id
