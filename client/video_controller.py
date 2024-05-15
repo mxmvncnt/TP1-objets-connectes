@@ -297,7 +297,10 @@ class VideoController:
         response = save_local_watch_data(self.current_video is not None, unsaved_videos_json)
 
         if response.get("object_is_lost"):
-            self.led_blink()
+            #self.led_blink()
+            self.start_led_blinking_thread()
+        else:
+            self.stop_led_blinking_thread()
 
         if response.get("videos") and len(response.get("videos")) > 0:
             received_videos = response.get("videos")
