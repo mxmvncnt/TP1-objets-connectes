@@ -36,14 +36,10 @@ def remove_all():
 
 
 def remove_video(video_id):
-    video = Video.select().where(Video.id == video_id)
+    return models.db.execute_sql("DELETE FROM video WHERE id = %s", video_id)
 
 
 def replace_all(videos_json: List[Video]):
-    print("REPLACE ALL VIDEOS BY:")
-    print("REPLACE ALL VIDEOS BY:")
-    print("REPLACE ALL VIDEOS BY:")
-    print("REPLACE ALL VIDEOS BY:")
     print(videos_json)
     videos = [Video(**data) for data in videos_json]
     for video in videos:
