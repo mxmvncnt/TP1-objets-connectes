@@ -10,4 +10,4 @@ class Video:
         return f'{self.fichier}'
 
     def __eq__(self, other):
-        return self.id == other.id
+        return self.md5 == other.md5
