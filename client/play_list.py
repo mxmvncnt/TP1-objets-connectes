@@ -34,6 +34,10 @@ class PlayList:
     def fetch_videos(self):
         videos_db_response = requests.get(f"{os.getenv('API_URL')}/video/list")
         videos_db_json = videos_db_response.json()
+
+        if not isinstance(videos_db_json, list):
+            return []
+
         videos_db = [Video(**data) for data in videos_db_json]
 
         videos = []
