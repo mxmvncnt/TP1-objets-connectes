@@ -82,7 +82,7 @@ def add_video_to_playlist(video: Video):
 
 
 def remove_video_from_playlist(video: Video):
-    print(f"Removing {video.fichier} from local database...")
+    print(f"Removing {video.fichier} (id: {video.id}) from local database...")
     requests.delete(
         url=f"{os.getenv('API_URL')}/video/{video.id}/remove",
     )
@@ -131,11 +131,24 @@ def get_local_videos() -> list[Video]:
 
 def add_missing_videos():
     print("Getting missing videos...")
-    missing_videos = get_missing_videos(get_server_videos(), get_local_videos())
+    server_videos = get_server_videos()
+    local_videos = get_local_videos()
+    missing_videos = get_missing_videos(server_videos, local_videos)
 
     for missing_video in missing_videos:
         download_video(missing_video)
         add_video_to_playlist(missing_video)
+        print("Done.")
+
+def remove_incorrect_videos():
+    print("Getting incorrect videos...")
+    server_videos = get_server_videos()
+    local_videos = get_local_videos()
+    incorrect_videos = get_incorrect_videos(server_videos, local_videos)
+
+    print("Removing incorrect videos...")
+    for incorrect_video in incorrect_videos:
+        remove_video_from_playlist(incorrect_video)
         print("Done.")
 
 
