@@ -2,6 +2,29 @@
   <h1 style="text-align: center;">Tableau de bord</h1>
   <hr>
 </div>
+
+<div>
+  <button (click)="addObject()" nz-button nzType="primary"><span nz-icon nzType="default" nzTheme="outline"></span>Ajouter un objet</button>
+</div>
+
+<!-- Formulaire d'ajout -->
+<div *ngIf="showAddForm">
+  <form (submit)="submitForm()">
+    <label>Nom de l'objet:</label>
+    <input type="text" [(ngModel)]="newObjectName" name="newObjectName" required>
+
+    <label>Emplacement:</label>
+    <input type="text" [(ngModel)]="newObjectLocation" name="newObjectLocation" required>
+
+    <label>Objet perdu:</label>
+    <input type="checkbox" [(ngModel)]="newObjectLost" name="newObjectLost" required>
+
+    <button type="submit" nz-button nzType="primary">Ajouter</button>
+  </form>
+</div>
+
+
+
 <nz-table #basicTable [nzData]="listOfData">
   <thead>
   <tr>
