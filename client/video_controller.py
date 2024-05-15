@@ -301,7 +301,7 @@ class VideoController:
 
         if response.get("videos") and len(response.get("videos")) > 0:
             received_videos = response.get("videos")
-            received_videos_object = get_video_objects_from_json(received_videos)
+            received_videos_object = get_video_objects_from_server_json(received_videos)
 
             videos_on_device = self.play_list.fetch_videos()
 

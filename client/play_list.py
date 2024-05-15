@@ -34,6 +34,7 @@ class PlayList:
             if len(get_server_videos()) > 0:
                 add_missing_videos()
                 self.fetch_videos()
+
         return len(self._videos) > 0
 
     def fetch_videos(self):
@@ -43,7 +44,7 @@ class PlayList:
         if not isinstance(videos_db_json, list):
             return []
 
-        videos_db = [Video(**data) for data in videos_db_json]
+        videos_db = get_video_objects_from_local_json(videos_db_json)
 
         videos = []
         vids_folder = f"{os.path.dirname(os.path.realpath(__file__))}/videos"

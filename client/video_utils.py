@@ -116,7 +116,7 @@ def get_server_videos() -> list[Video]:
     )
 
     server_videos_json = json.loads(server_videos.content)
-    return get_video_objects_from_json(server_videos_json)
+    return get_video_objects_from_server_json(server_videos_json)
 
 
 def get_local_videos() -> list[Video]:
@@ -139,10 +139,8 @@ def add_missing_videos():
         print("Done.")
 
 
-def get_video_objects_from_json(json_data) -> list[Video]:
+def get_video_objects_from_server_json(json_data) -> list[Video]:
     videos_objets = []
-
-    print(json_data)
 
     for video in json_data:
         new_video = Video(
@@ -150,6 +148,23 @@ def get_video_objects_from_json(json_data) -> list[Video]:
             fichier=video.get('file'),
             taille=video.get('size'),
             ordre=1,
+            md5=video.get('md5')
+        )
+
+        videos_objets.append(new_video)
+
+    return videos_objets
+
+
+def get_video_objects_from_local_json(json_data) -> list[Video]:
+    videos_objets = []
+
+    for video in json_data:
+        new_video = Video(
+            id=video.get('id'),
+            fichier=video.get('fichier'),
+            taille=video.get('tailler'),
+            ordre=video.get('ordre'),
             md5=video.get('md5')
         )
 
