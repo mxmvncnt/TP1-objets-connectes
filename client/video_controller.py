@@ -200,11 +200,12 @@ class VideoController:
 
     def skip(self):
         if self.video_display is not None:
-            print(f"skipping to video: {self.play_list.current_video.fichier}")
-
             self.stop()
             self.current_video = self.play_list.next_video()
             self.play(False, self.current_video)
+
+            print(f"skipping to video: {self.play_list.current_video.fichier}")
+
         else:
             self.play(False, self.play_list.current_video)
 
@@ -302,25 +303,15 @@ class VideoController:
         else:
             self.stop_led_blinking_thread()
 
-        if response.get("videos") and len(response.get("videos")) > 0:
-            received_videos = response.get("videos")
-            server_videos = get_video_objects_from_server_json(received_videos)
+        # add missing videos
+        add_missing_videos()
 
-            videos_on_device = self.play_list.fetch_videos()
+        # replace database table with incoming videos
+        remove_incorrect_videos()
 
-            incorrect_videos = get_incorrect_videos(server_videos, videos_on_device)
-            missing_videos = get_missing_videos(server_videos, videos_on_device)
+        self.play_list.refresh_videos()
 
-            # add missing videos
-            add_missing_videos()
-
-            # replace database table with incoming videos
-            remove_incorrect_videos()
-
-            listbefore = self.play_list
-            self.play_list.refresh_videos()
-            listafter = self.play_list
-
+        print("=== Loop completed ===")
 
         time.sleep(10)
         self.send_watch_data_loop()

@@ -38,8 +38,17 @@ class PlayList:
         return len(self._videos) > 0
 
     def refresh_videos(self):
+        videos_count_before = len(self._videos)
+        videos = self.fetch_videos()
+        videos_count_after = len(videos)
+
         self.videos.clear()
-        self.videos.extend(self.fetch_videos())
+        self.videos.extend(videos)
+
+        # prevent index out of bounds when deleting a video
+        if videos_count_after < videos_count_before and self._current_video_index >= videos_count_after:
+            difference = videos_count_after - videos_count_before
+            self._current_video_index -= difference - 1
 
     def fetch_videos(self):
         videos_db_response = requests.get(f"{os.getenv('API_URL')}/video/list")

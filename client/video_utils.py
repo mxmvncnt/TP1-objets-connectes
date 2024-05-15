@@ -100,11 +100,11 @@ def get_missing_videos(server_videos: list[Video], local_videos: list[Video]) ->
 
 # Get the videos that are present on the device but not on the server
 def get_incorrect_videos(server_videos: list[Video], local_videos: list[Video]) -> list[Video]:
+    print("Getting incorrect videos...")
     incorrect_videos = []
     for local_video in local_videos:
         if local_video not in server_videos:
             incorrect_videos.append(local_video)
-
     return incorrect_videos
 
 
@@ -140,8 +140,8 @@ def add_missing_videos():
         add_video_to_playlist(missing_video)
         print("Done.")
 
+
 def remove_incorrect_videos():
-    print("Getting incorrect videos...")
     server_videos = get_server_videos()
     local_videos = get_local_videos()
     incorrect_videos = get_incorrect_videos(server_videos, local_videos)
