@@ -33,9 +33,13 @@ class PlayList:
         if len(self._videos) == 0:
             if len(get_server_videos()) > 0:
                 add_missing_videos()
-                self.fetch_videos()
+                self.videos.extend(self.fetch_videos())
 
         return len(self._videos) > 0
+
+    def refresh_videos(self):
+        self.videos.clear()
+        self.videos.extend(self.fetch_videos())
 
     def fetch_videos(self):
         videos_db_response = requests.get(f"{os.getenv('API_URL')}/video/list")
