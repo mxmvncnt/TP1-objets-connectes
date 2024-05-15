@@ -8,7 +8,7 @@ import tkinter.font as tkFont
 import requests
 
 import settings as s
-from client.server_utils import *
+from client.video_utils import *
 from video import Video
 from play_list import PlayList
 from video_display import VideoDisplay
@@ -43,6 +43,7 @@ class VideoController:
             self.led_thread = None
 
         self.play_list = play_list
+
         self.current_video: Video = self.play_list.current_video
 
         # Thread Affichage Video
@@ -300,22 +301,17 @@ class VideoController:
 
         if response.get("videos") and len(response.get("videos")) > 0:
             received_videos = response.get("videos")
-            received_videos_object = self.play_list.fetch_videos_from_json(received_videos)
+            received_videos_object = get_video_objects_from_json(received_videos)
 
             videos_on_device = self.play_list.fetch_videos()
 
-            missing_videos = get_missing_videos(received_videos_object, videos_on_device)
             incorrect_videos = get_incorrect_videos(received_videos_object, videos_on_device)
 
             print(f"local videos: {videos_on_device}")
             print(f"received vid: {received_videos_object}")
 
             # add missing videos
-            for missing_video in missing_videos:
-                download_video(missing_video)
-                add_video_to_playlist(missing_video)
-                self.play_list.videos.append(missing_video)
-                print("Done.")
+            add_missing_videos()
 
             # replace database table with incoming videos
             for incorrect_video in incorrect_videos:

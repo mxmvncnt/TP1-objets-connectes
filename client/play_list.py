@@ -3,6 +3,7 @@ import os
 
 import requests
 
+from client.video_utils import *
 from video import Video
 from dotenv import load_dotenv
 
@@ -29,6 +30,10 @@ class PlayList:
         return self._videos[self._current_video_index]
 
     def videos_exist(self):
+        if len(self._videos) == 0:
+            if len(get_server_videos()) > 0:
+                add_missing_videos()
+                self.fetch_videos()
         return len(self._videos) > 0
 
     def fetch_videos(self):
@@ -51,22 +56,6 @@ class PlayList:
                     video.fichier = file_path
                     videos.append(video)
         return videos
-
-    def fetch_videos_from_json(self, json_data):
-        videos_objets = []
-
-        for video in json_data:
-            new_video = Video(
-                id=video.get('id'),
-                fichier=video.get('file'),
-                taille=video.get('size'),
-                ordre=1,
-                md5=video.get('md5')
-            )
-
-            videos_objets.append(new_video)
-
-        return videos_objets
 
     def next_video(self) -> Video:
         if self._current_video_index + 1 < len(self._videos):
