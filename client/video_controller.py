@@ -301,23 +301,23 @@ class VideoController:
 
         if response.get("videos") and len(response.get("videos")) > 0:
             received_videos = response.get("videos")
-            received_videos_object = get_video_objects_from_server_json(received_videos)
+            server_videos = get_video_objects_from_server_json(received_videos)
 
             videos_on_device = self.play_list.fetch_videos()
 
-            incorrect_videos = get_incorrect_videos(received_videos_object, videos_on_device)
-
-            print(f"local videos: {videos_on_device}")
-            print(f"received vid: {received_videos_object}")
+            incorrect_videos = get_incorrect_videos(server_videos, videos_on_device)
+            missing_videos = get_missing_videos(server_videos, videos_on_device)
 
             # add missing videos
             add_missing_videos()
 
             # replace database table with incoming videos
-            for incorrect_video in incorrect_videos:
-                remove_video_from_playlist(incorrect_video)
-                self.play_list.videos.remove(incorrect_video)
-                print("Done.")
+            remove_incorrect_videos()
 
-        time.sleep(60)
+            listbefore = self.play_list
+            self.play_list.refresh_videos()
+            listafter = self.play_list
+
+
+        time.sleep(10)
         self.send_watch_data_loop()
