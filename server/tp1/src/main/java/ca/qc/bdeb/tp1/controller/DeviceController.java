@@ -133,4 +133,16 @@ public class DeviceController {
     public ResponseEntity<Resource> getVideoFile(@PathVariable int videoId) throws IOException {
         return storageService.getFile(videoId);
     }
+
+    @PostMapping("/devices/add/{deviceName}/{location}/{isLost}")
+    public void addNewVideo(
+            @PathVariable String deviceName,
+            @PathVariable String location,
+            @PathVariable boolean isLost) {
+        Device device = new Device();
+        device.setName(deviceName);
+        device.setLocation(location);
+        device.setLost(isLost);
+        deviceService.createDevice(device);
+    }
 }

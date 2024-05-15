@@ -39,4 +39,8 @@ public class DeviceService {
     public void updateDeviceName(int deviceId, String newName) { deviceRepository.updateDeviceName(deviceId, newName); }
 
     public void updateDeviceLocation(int deviceId, String newLocation) { deviceRepository.updateDeviceLocation(deviceId, newLocation); }
+
+    public void createDevice(Device device) {
+        deviceRepository.save(device);
+    };
 }

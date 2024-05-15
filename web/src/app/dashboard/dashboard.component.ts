@@ -3,6 +3,7 @@ import {Device} from '../model/device.model';
 
 import {DataService} from "../../services/data/data.service";
 import {da_DK} from "ng-zorro-antd/i18n";
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,8 +16,13 @@ export class DashBoardComponent implements OnInit, OnDestroy {
   editId: string | null = null;
   editLocationId: string | null = null;
   updateIntervalRef: any;
-  
-  constructor(private dataService: DataService) { }
+
+  showAddForm: boolean = false;
+  newObjectName: string = '';
+  newObjectLocation: string = '';
+  newObjectLost: boolean = false;
+
+  constructor(private dataService: DataService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.getData();
@@ -89,7 +95,36 @@ export class DashBoardComponent implements OnInit, OnDestroy {
     )
   }
 
+  // Méthode pour soumettre le formulaire
+  submitForm() {
+    if (this.newObjectName && this.newObjectLocation) {
+
+      this.dataService.postData(`/devices/add/${this.newObjectName}/${this.newObjectLocation}/${this.newObjectLost}`, null).subscribe(
+        (data) => {
+          console.log(data);
+        }
+      )
+      console.log("Nouvel objet ajouté:", this.newObjectName, this.newObjectLocation, this.newObjectLost);
+      
+      this.resetChamps()
+      this.showAddForm = false;
+    } else {
+      console.log("Veuillez remplir tous les champs obligatoires.");
+    }
+  }
+
+  addObject() {
+    this.showAddForm = true;
+  }
+  
   ngOnDestroy(): void {
     clearInterval(this.updateIntervalRef);
+  }
+
+  resetChamps() {
+    // Réinitialise les champs après soumission
+    this.newObjectName = '';
+    this.newObjectLocation = '';
+    this.newObjectLost = false;
   }
 }

@@ -5,6 +5,7 @@ import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 
+
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
@@ -16,6 +17,7 @@ import { FormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms'; // Importe le module ReactiveFormsModule
 
 import { DashBoardComponent } from './dashboard/dashboard.component';
 import { PlaylistComponent } from './playlist/playlist.component';
@@ -38,6 +40,7 @@ registerLocaleData(fr);
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     NzTableModule,
     NzUploadModule,
     NzModalModule,

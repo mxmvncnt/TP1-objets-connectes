@@ -1,56 +1,91 @@
-<div style="padding: 0 40%">
-    <h1 style="text-align: center;">Liste de lecture</h1>
-    <hr>
-  </div>
-  <div class="clearfix" style="text-align: center;">
-    <nz-upload
-      [nzAction]="getUploadUrl()"
-      nzListType="picture-card"
-      nzAccept="video/*"
-      [(nzFileList)]="fileList"
-      [nzShowButton]="fileList.length < 8"
-      [nzShowUploadList]="showUploadList"
-      [nzPreview]="handlePreview"
-      (nzChange)="onChange($event)"
-    >
-      <div>
-        <span nz-icon nzType="plus"></span>
-        <div style="margin-top: 8px">Téléverser</div>
-      </div>
-    </nz-upload>
-    <nz-modal
-      [nzVisible]="previewVisible"
-      [nzContent]="modalContent"
-      [nzFooter]="null"
-      (nzOnCancel)="previewVisible = false"
-    >
-      <ng-template #modalContent>
-        <img [src]="previewImage" [ngStyle]="{ width: '100%' }"/>
-      </ng-template>
-    </nz-modal>
-  </div>
-  <nz-table #basicTable [nzData]="playList">
-    <thead>
-    <tr>
-      <th>Vidéo</th>
-      <th>Taille (KB)</th>
-      <th>Supprimer</th>
-      <th>Changer la position</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let data of basicTable.data, index as i">
-      <td>{{ data.video.file }}</td>
-      <td>{{ data.video.size }}</td>
-      <td>
-        <button (click)="deleteVideo(data.video.id)" nz-button nzType="primary" nzDanger><span nz-icon nzType="delete" nzTheme="outline"></span></button>
-      </td>
-      <td>
-        <div class="upDown">
-          <button nz-button nzType="default" [disabled]="!previousExists(i)" (click)="goUp(i)"><span nz-icon nzType="up" nzTheme="outline"></span></button>
-          <button nz-button nzType="default" [disabled]="!nextExists(i)" (click)="goDown(i)"><span nz-icon nzType="down" nzTheme="outline"></span></button>
+<div nz-row>
+
+  <div nz-col nzSpan="12">
+    <div>
+      <h1 style="text-align: center;">Liste de lecture</h1>
+      <hr>
+    </div>
+    <div class="clearfix" style="text-align: center;">
+      <nz-upload
+        [nzAction]="getUploadUrl()"
+        nzListType="picture-card"
+        nzAccept="video/*"
+        [(nzFileList)]="fileList"
+        [nzShowButton]="fileList.length < 8"
+        [nzShowUploadList]="showUploadList"
+        [nzPreview]="handlePreview"
+        (nzChange)="onChange($event)"
+      >
+        <div>
+          <span nz-icon nzType="plus"></span>
+          <div style="margin-top: 8px">Téléverser</div>
         </div>
-      </td>
-    </tr>
-    </tbody>
-  </nz-table>
+      </nz-upload>
+      <nz-modal
+        [nzVisible]="previewVisible"
+        [nzContent]="modalContent"
+        [nzFooter]="null"
+        (nzOnCancel)="previewVisible = false"
+      >
+        <ng-template #modalContent>
+          <img [src]="previewImage" [ngStyle]="{ width: '100%' }"/>
+        </ng-template>
+      </nz-modal>
+    </div>
+    <nz-table #basicTable [nzData]="playList">
+      <thead>
+      <tr>
+        <th>Vidéo</th>
+        <th>Taille (KB)</th>
+        <th>Supprimer</th>
+        <th>Changer la position</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTable.data, index as i">
+        <td>{{ data.video.file }}</td>
+        <td>{{ data.video.size }}</td>
+        <td>
+          <button (click)="deleteVideo(data.video.id)" nz-button nzType="primary" nzDanger><span nz-icon nzType="delete" nzTheme="outline"></span></button>
+        </td>
+        <td>
+          <div class="upDown">
+            <button nz-button nzType="default" [disabled]="!previousExists(i)" (click)="goUp(i)"><span nz-icon nzType="up" nzTheme="outline"></span></button>
+            <button nz-button nzType="default" [disabled]="!nextExists(i)" (click)="goDown(i)"><span nz-icon nzType="down" nzTheme="outline"></span></button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </div>
+
+
+
+  <div nz-col nzSpan="12" style="border-left: 1px solid black;">
+      <div>
+        <h1 style="text-align: center;">Statistiques</h1>
+        <hr>
+      </div>
+      
+
+      <!-- <nz-table #basicTable [nzData]="history">
+        <thead>
+        <tr>
+          <th>Vidéo</th>
+          <th>Date jouée</th>
+          <th>Nombre de fois joué</th>
+          <th>Nombre de Temps joué</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of basicTable.data, index as i">
+          <td>{{ data.file }}</td>
+          <td>{{ data.date }}</td>
+          <td>{{ data.nbOfPlay }}</td>
+          <td>{{ data.totalTimePlay }}</td>
+        </tr>
+        </tbody>
+      </nz-table> -->
+  </div>
+</div>
+

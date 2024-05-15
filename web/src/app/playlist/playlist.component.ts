@@ -26,6 +26,7 @@ interface PlayList {
 })
 export class PlaylistComponent implements OnInit {
   playList: PlayList[]
+  // history: 
   deviceId: number;
   
   fileList: NzUploadFile[] = []
@@ -44,6 +45,7 @@ export class PlaylistComponent implements OnInit {
   ngOnInit(): void {
     this.deviceId = this.route.snapshot.params["id"];
     this.getData();
+    // this.getHistoryData();
   }
   
   onChange(file: NzUploadChangeParam) {
