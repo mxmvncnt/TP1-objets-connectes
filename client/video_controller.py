@@ -320,7 +320,10 @@ class VideoController:
         response = json.loads(save_request.content)
 
         if response.get("object_is_lost"):
-            self.led_blink()
+            #self.led_blink()
+            self.start_led_blinking_thread()
+        else:
+            self.stop_led_blinking_thread()
 
         if response["videos"]:
             received_videos = response.get("videos")
