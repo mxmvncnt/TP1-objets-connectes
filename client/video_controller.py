@@ -8,6 +8,7 @@ import tkinter.font as tkFont
 import requests
 
 import settings as s
+from client.server_utils import *
 from video import Video
 from play_list import PlayList
 from video_display import VideoDisplay
@@ -66,7 +67,6 @@ class VideoController:
         self.led_on_off_thread = threading.Thread(target=self.start_led_on_off, daemon=True)
         self.led_on_off_thread.start()
 
-        
     def create_gui(self, root):
         self.root = root
         # setting title
@@ -234,9 +234,9 @@ class VideoController:
     def start_gpio(self):
         if sensor_found:
             self.sensor.loop()
-        
+
     def start_sensor(self):
-            self.sensor.loop()
+        self.sensor.loop()
 
     def start_led_on_off(self):
         if sensor_found:
@@ -292,84 +292,36 @@ class VideoController:
         self.display_stats()
 
     def send_watch_data_loop(self):
-        headers = {'Content-type': 'application/json'}
-
-        print("sending watch data")
-        unsaved_videos = requests.get(url=f"{os.getenv('API_URL')}/lecture/unsaved")
-        unsaved_video_json = json.loads(unsaved_videos.content)
-
-        try:    
-            if unsaved_video_json.get("message") == "Aucun r\u00e9sultat trouv\u00e9":
-                unsaved_video_json = []
-        except:
-            print("KABOOOOOOM!!!")
-
-        save_request = requests.post(
-            url=f"{os.getenv('SERVER_URL')}/devices/{s.DEVICE_ID}/status",
-            data=json.dumps({"is_playing": self.current_video is not None, "videos": unsaved_video_json}),
-            headers=headers
-        )
-
-        # The history has been saved on the backend server, we delete it on the device.
-        if save_request.status_code == 200:
-            print("save successful: removing history from device")
-            requests.delete(
-                url=f"{os.getenv('API_URL')}/historique/purge",
-            )
-
-        response = json.loads(save_request.content)
+        unsaved_videos_json = get_local_watch_data()
+        response = save_local_watch_data(self.current_video is not None, unsaved_videos_json)
 
         if response.get("object_is_lost"):
             self.led_blink()
 
-        if response["videos"]:
+        if response.get("videos") and len(response.get("videos")) > 0:
             received_videos = response.get("videos")
             received_videos_object = self.play_list.fetch_videos_from_json(received_videos)
 
             videos_on_device = self.play_list.fetch_videos()
 
-            print(received_videos_object)
-            print(videos_on_device)
+            missing_videos = get_missing_videos(received_videos_object, videos_on_device)
+            incorrect_videos = get_incorrect_videos(received_videos_object, videos_on_device)
 
-            # download missing videos
-            for received_video in received_videos_object:
-                if received_video not in videos_on_device:
-                    # if any(isinstance(received_video, Video) and received_video == )
-                    print(f"downloading: {received_video.fichier}")
+            print(f"local videos: {videos_on_device}")
+            print(f"received vid: {received_videos_object}")
 
-                    missing_video = requests.get(
-                        url=f"{os.getenv('SERVER_URL')}/videos/{received_video.id}/download",
-                        headers=headers
-                    )
-
-                    filename = missing_video.headers.get("Content-Disposition").split("attachment; filename=")[1]
-                    missing_video = missing_video.content
-
-                    f = open(f"{os.path.dirname(os.path.realpath(__file__))}/videos/{filename}", "wb")
-                    f.write(missing_video)
-                    f.close()
-
-                    print("adding new video to database")
-                    requests.post(
-                        url=f"{os.getenv('API_URL')}/video/add",
-                        data={
-                            "fichier": received_video.fichier,
-                            "taille": received_video.taille,
-                            "md5": received_video.md5,
-                            "ordre": 1,
-                        },
-                    )
-                    print("done")
-
+            # add missing videos
+            for missing_video in missing_videos:
+                download_video(missing_video)
+                add_video_to_playlist(missing_video)
+                self.play_list.videos.append(missing_video)
+                print("Done.")
 
             # replace database table with incoming videos
-            for video_on_device in videos_on_device:
-                if video_on_device not in received_videos_object:
-                    print("deleting video from database")
-                    requests.delete(
-                        url=f"{os.getenv('API_URL')}/video/{received_video.id}/remove",
-                    )
-                    print("done")
+            for incorrect_video in incorrect_videos:
+                remove_video_from_playlist(incorrect_video)
+                self.play_list.videos.remove(incorrect_video)
+                print("Done.")
 
         time.sleep(60)
         self.send_watch_data_loop()
