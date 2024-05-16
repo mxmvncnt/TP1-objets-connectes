@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 from datetime import datetime
@@ -53,8 +54,7 @@ def delete_local_watch_data():
     )
 
 
-def download_video(video: Video):
-    print(video)
+def download_video(video: Video) -> bool:
     print(f"Downloading: {video.fichier}")
 
     missing_video = requests.get(
@@ -65,10 +65,23 @@ def download_video(video: Video):
     filename = missing_video.headers.get("Content-Disposition").split("attachment; filename=")[1]
     missing_video = missing_video.content
 
+    hash_md5 = hashlib.md5()
+
     print(f"Writing to file: {video.fichier}")
-    f = open(f"{os.path.dirname(os.path.realpath(__file__))}/videos/{filename}", "wb")
-    f.write(missing_video)
-    f.close()
+    path = f"{os.path.dirname(os.path.realpath(__file__))}/videos/{filename}"
+    with open(path, "wb") as f:
+        f.write(missing_video)
+        print("Calculating MD5...")
+        hash_md5.update(missing_video)
+
+    md5_hash = hash_md5.hexdigest()
+
+    if md5_hash != video.md5:
+        print("The MD5 does not match. Deleting file...")
+        os.remove(path)
+        return False
+
+    return True
 
 
 def add_video_to_playlist(video: Video):
@@ -139,9 +152,10 @@ def add_missing_videos():
     missing_videos = get_missing_videos(server_videos, local_videos)
 
     for missing_video in missing_videos:
-        download_video(missing_video)
-        add_video_to_playlist(missing_video)
-        print("Done.")
+        download_success = download_video(missing_video)
+        if download_success:
+            add_video_to_playlist(missing_video)
+            print("Done.")
 
 
 def remove_incorrect_videos():
