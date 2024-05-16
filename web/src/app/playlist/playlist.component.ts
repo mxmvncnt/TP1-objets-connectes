@@ -19,6 +19,8 @@ interface PlayList {
   position: number;
 }
 
+
+
 @Component({
   selector: "app-playlist",
   templateUrl: "./playlist.component.html",
@@ -26,7 +28,8 @@ interface PlayList {
 })
 export class PlaylistComponent implements OnInit {
   playList: PlayList[]
-  history = [{file: 'test.mp4', endDate: '2024-05-15', nbOfPlay: 2, totalTimePlay: 1500}]
+  // history = [{file: 'test.mp4', endDate: '2024-05-15', nbOfPlay: 2, totalTimePlay: 1500}]
+  history = []
   deviceId: number;
   
   fileList: NzUploadFile[] = []
@@ -37,6 +40,8 @@ export class PlaylistComponent implements OnInit {
   videoMovedIndex;
   videoReplacedIndex;
 
+  updateIntervalRef
+
   constructor(
     private dataService: DataService,
     private route: ActivatedRoute,
@@ -45,8 +50,44 @@ export class PlaylistComponent implements OnInit {
   ngOnInit(): void {
     this.deviceId = this.route.snapshot.params["id"];
     this.getData();
-    // this.getHistoryData();
+    this.getHistoryData();
+    this.updateIntervalRef = setInterval(() => {this.getData(); this.getHistoryData(); console.log('DashBoard updated')}, (5 * 1000));
   }
+
+  getHistoryData(){
+    this.dataService.getData(`/devices/${this.deviceId}/history`).subscribe(
+      (data) => {
+        const videosMap = new Map<number, { videoName: string, endDate: Date, totalDuration: number, playCount: number, dayPlay: string }>();
+  
+        data.forEach((historyElem) => {
+          const vidId: number = historyElem.video.id;
+          const videoName: string = historyElem.video.file;
+          const start: Date = new Date(historyElem.start);
+          const end: Date = new Date(historyElem.end);
+          const durationInSeconds: number = (end.getTime() - start.getTime()) / 1000;
+          const dayPlay: string = `${end.getFullYear()}-${end.getMonth() + 1}-${end.getDate()} ${end.getHours()}:${end.getMinutes()}:${end.getSeconds()}`;
+
+  
+          if (!videosMap.has(vidId)) {
+            videosMap.set(vidId, { videoName: videoName, endDate: end, totalDuration: durationInSeconds, playCount: 1, dayPlay });
+          } else {
+            const currentVideo = videosMap.get(vidId)!;
+            videosMap.set(vidId, {
+              videoName: currentVideo.videoName,
+              endDate: currentVideo.endDate > end ? currentVideo.endDate : end,
+              totalDuration: currentVideo.totalDuration + durationInSeconds,
+              playCount: currentVideo.playCount + 1,
+              dayPlay: `${currentVideo.endDate.getFullYear()}-${currentVideo.endDate.getMonth() + 1}-${currentVideo.endDate.getDate()} ${currentVideo.endDate.getHours()}:${currentVideo.endDate.getMinutes()}:${currentVideo.endDate.getSeconds()}`
+            });
+          }
+        });
+  
+        const distinctVideos = Array.from(videosMap.values());
+        this.history = distinctVideos;
+        console.log(distinctVideos, 'is distinct');
+      }
+    );
+  } 
   
   onChange(file: NzUploadChangeParam) {
     console.log(this.playList);
@@ -87,13 +128,7 @@ export class PlaylistComponent implements OnInit {
       });
   }
 
-  getHistoryData(){
-    this.dataService.getData(`/devices/${this.deviceId}/status`).subscribe(
-      (data) => {
-        c
-      }
-    )
-  } 
+  
 
  handlePreview = async (file: NzUploadFile): Promise<void> => {
   if (!file.url && !file.preview) {
@@ -178,11 +213,15 @@ changeVideoPositionInDb(videoId: number, videoPosition: number, video: Video) {
   )
 }
 
-
 nextExists(index: number): boolean {
   return index < this.playList.length - 1
 }
+
 previousExists(index : number): boolean {
   return index > 0
+}
+
+ngOnDestroy() {
+  clearInterval(this.updateIntervalRef);
 }
 }

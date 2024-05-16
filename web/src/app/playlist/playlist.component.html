@@ -74,15 +74,15 @@
           <th>Vidéo</th>
           <th>Date jouée</th>
           <th>Nombre de fois joué</th>
-          <th>Nombre de Temps joué en secondes</th>
+          <th>Nombre total de temps joué</th>
         </tr>
         </thead>
         <tbody>
         <tr *ngFor="let data of history, let id = index">
-          <td>{{ data.file }}</td>
-          <td>{{ data.endDate }}</td>
-          <td>{{ data.nbOfPlay }}</td>
-          <td>{{ data.totalTimePlay }}</td>
+          <td>{{ data.videoName }}</td>
+          <td>{{ data.dayPlay }}</td>
+          <td>{{ data.playCount }}</td>
+          <td>{{ data.totalDuration }} (s)</td>
         </tr>
         </tbody>
       </nz-table>
