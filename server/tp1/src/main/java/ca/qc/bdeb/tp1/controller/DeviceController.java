@@ -115,7 +115,11 @@ public class DeviceController {
             @RequestBody Map<String, Object> body) throws ParseException {
         Boolean isPlaying = (Boolean) body.get("is_playing");
         List<Map<String, Object>> videosMap = (List<Map<String, Object>>) body.get("videos");
-        List<Video> videos = deviceService.getVideosFromId(videosMap.stream().filter(video -> video.get("id") != null).map(video -> (Integer) video.get("id")).toList());
+        List<Video> videos = deviceService.getVideosFromMd5(
+                videosMap.stream()
+                        .filter(video -> video.get("md5") != null)
+                        .map(video -> (String) video.get("md5"))
+                        .toList());
 
         videoService.addHistoryEntries(videosMap, videos, deviceId);
 

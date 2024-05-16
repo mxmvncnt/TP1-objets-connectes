@@ -1,17 +1,20 @@
 import json
 import os
+from datetime import datetime
+from typing import List, Dict, Any
 
 import settings as s
 
 import requests
 
+from client.history_entry import HistoryEntry
 from client.video import Video
 
 headers = {'Content-type': 'application/json'}
 
 
 # get unsaved watch history
-def get_local_watch_data():
+def get_local_watch_data() -> list[HistoryEntry]:
     print("Getting local watch data...")
     unsaved_videos = requests.get(url=f"{os.getenv('API_URL')}/lecture/unsaved")
     unsaved_videos_json = json.loads(unsaved_videos.content)
@@ -24,14 +27,14 @@ def get_local_watch_data():
     except:
         print("Unsaved data found.")
 
-    return unsaved_videos_json
+    return get_history_objects_from_local_json(unsaved_videos_json)
 
 
-def save_local_watch_data(is_playing: bool, unsaved_videos_json):
+def save_local_watch_data(is_playing: bool, unsaved_history):
     print("Sending unsaved videos...")
     save_request = requests.post(
         url=f"{os.getenv('SERVER_URL')}/devices/{s.DEVICE_ID}/status",
-        data=json.dumps({"is_playing": is_playing, "videos": unsaved_videos_json}),
+        data=json.dumps({"is_playing": is_playing, "videos": unsaved_history}),
         headers=headers
     )
 
@@ -184,3 +187,39 @@ def get_video_objects_from_local_json(json_data) -> list[Video]:
         videos_objets.append(new_video)
 
     return videos_objets
+
+
+def get_history_objects_from_local_json(json_data) -> list[HistoryEntry]:
+    history_objects = []
+
+    for history in json_data:
+        video: Video = get_video_from_id(history.get('video_id'))
+        new_video = HistoryEntry(
+            id=history.get('id'),
+            video=video,
+            start=history.get('debut'),
+            end=history.get('fin')
+        )
+
+        history_objects.append(new_video)
+
+    return history_objects
+
+
+def get_history_json_from_objects(history: list[HistoryEntry]) -> list[dict[str, Any]]:
+    history_objects = []
+
+    for entry in history:
+        history_objects.append({
+            "md5": entry.video.md5,
+            "start": datetime.strptime(entry.start, "%a, %d %b %Y %H:%M:%S %Z").strftime('%Y-%m-%d %H:%M:%S'),
+            "end": datetime.strptime(entry.end, "%a, %d %b %Y %H:%M:%S %Z").strftime('%Y-%m-%d %H:%M:%S')
+        })
+
+    return history_objects
+
+
+def get_video_from_id(video_id: int) -> Video:
+    video = requests.get(f"{os.getenv('API_URL')}/video/{video_id}")
+    video_db_json = video.json()
+    return get_video_objects_from_local_json(video_db_json)[0]

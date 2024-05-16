@@ -11,7 +11,8 @@ def get_list():
 
 def get_by_id(video_id):
     video = Video.select().where(Video.id == video_id).first()
-    return to_json(video)
+    print(video)
+    return to_json([video])
 
 
 def add_video(fichier, taille, md5, ordre):

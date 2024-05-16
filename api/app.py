@@ -92,6 +92,7 @@ def get_lectures():
 def purge_history():
     lecture.delete_all()
     historique.delete_all()
+    return ""
 
 
 if __name__ == '__main__':

@@ -294,7 +294,8 @@ class VideoController:
         self.display_stats()
 
     def send_watch_data_loop(self):
-        unsaved_videos_json = get_local_watch_data()
+        unsaved_videos = get_local_watch_data()
+        unsaved_videos_json = get_history_json_from_objects(unsaved_videos)
         response = save_local_watch_data(self.current_video is not None, unsaved_videos_json)
 
         if response.get("object_is_lost"):

@@ -19,4 +19,5 @@ def get_count_today():
 
 
 def delete_all():
-    models.db.execute_sql("DELETE FROM lecture")
+    # models.db.execute_sql("DELETE FROM lecture")
+    print("delete lecture")
