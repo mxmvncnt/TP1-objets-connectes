@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "video")
+@Table(name = "video", uniqueConstraints = @UniqueConstraint(columnNames = {"file", "size", "md5"}))
 public class Video {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -19,11 +19,14 @@ create table video
 
 create table history
 (
-    id       int auto_increment
+    id        int auto_increment
         primary key,
-    video_id int      not null,
-    start    datetime not null comment 'when the video started playing',
-    end      datetime not null comment 'when the video stopped playing',
+    video_id  int      not null,
+    device_id int      not null,
+    start     datetime not null comment 'when the video started playing',
+    end       datetime not null comment 'when the video stopped playing',
+    constraint history_device_id_fk
+        foreign key (device_id) references device (id),
     constraint history_video_id_fk
         foreign key (video_id) references video (id)
             on delete cascade
