@@ -18,6 +18,10 @@ public class History {
     @JoinColumn(name = "video_id", referencedColumnName = "id")
     private Video video;
 
+    @OneToOne
+    @JoinColumn(name = "device_id", referencedColumnName = "id")
+    private Device device;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start")
     private Date start;

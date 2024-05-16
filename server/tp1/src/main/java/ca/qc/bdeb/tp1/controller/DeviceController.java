@@ -1,12 +1,10 @@
 package ca.qc.bdeb.tp1.controller;
 
 import ca.qc.bdeb.tp1.data.entity.Device;
+import ca.qc.bdeb.tp1.data.entity.History;
 import ca.qc.bdeb.tp1.data.entity.Video;
 import ca.qc.bdeb.tp1.data.entity.VideoWithPosition;
-import ca.qc.bdeb.tp1.service.DeviceService;
-import ca.qc.bdeb.tp1.service.PlaylistService;
-import ca.qc.bdeb.tp1.service.StorageService;
-import ca.qc.bdeb.tp1.service.VideoService;
+import ca.qc.bdeb.tp1.service.*;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -26,16 +24,18 @@ public class DeviceController {
     private final PlaylistService playlistService;
     private final StorageService storageService;
     private final VideoService videoService;
+    private final HistoryService historyService;
 
     public DeviceController(
             DeviceService deviceService,
             PlaylistService playlistService,
             StorageService storageService,
-            VideoService videoService) {
+            VideoService videoService, HistoryService historyService) {
         this.deviceService = deviceService;
         this.playlistService = playlistService;
         this.storageService = storageService;
         this.videoService = videoService;
+        this.historyService = historyService;
     }
 
     @GetMapping("/devices")
@@ -62,8 +62,8 @@ public class DeviceController {
             @RequestBody MultipartFile file) throws IOException {
         storageService.save(file);
         Video video = storageService.getVideo(file);
-        videoService.addVideo(video);
-        playlistService.addToPlaylist(deviceId, video);
+        Video newVideo = videoService.addVideo(video);
+        playlistService.addToPlaylist(deviceId, newVideo);
     }
 
     @DeleteMapping("/devices/{deviceId}/playlist/{videoId}")
@@ -128,6 +128,12 @@ public class DeviceController {
         response.put("videos", playlistService.getPlaylist(deviceId));
 
         return response;
+    }
+
+    @GetMapping("/devices/{deviceId}/history")
+    public List<History> getHistory(
+            @PathVariable int deviceId) {
+        return historyService.getHistoryEntries(deviceId);
     }
 
     @GetMapping("/videos/{videoId}/download")

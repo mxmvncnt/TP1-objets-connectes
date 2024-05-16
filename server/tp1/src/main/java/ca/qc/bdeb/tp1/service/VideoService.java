@@ -4,6 +4,7 @@ import ca.qc.bdeb.tp1.data.entity.History;
 import ca.qc.bdeb.tp1.data.entity.Video;
 import ca.qc.bdeb.tp1.data.repository.HistoryRepository;
 import ca.qc.bdeb.tp1.data.repository.VideoRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,8 +26,21 @@ public class VideoService {
         this.repositories = repositories;
     }
 
-    public void addVideo(Video video) {
-        videoRepository.save(video);
+    public Video addVideo(Video video) {
+        if (saveIfNotExists(video)) {
+            return video;
+        } else {
+            return videoRepository.findByFileAndMd5(video.getFile(), video.getMd5());
+        }
+    }
+
+    public boolean saveIfNotExists(Video video) {
+        if (videoRepository.existsByFileAndSizeAndMd5(video.getFile(), video.getSize(), video.getMd5())) {
+            return false;
+        } else {
+            videoRepository.save(video);
+            return true;
+        }
     }
 
     public List<Video> getAllVideos() {
