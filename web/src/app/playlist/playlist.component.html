@@ -68,24 +68,24 @@
       </div>
       
 
-      <!-- <nz-table #basicTable [nzData]="history">
+      <nz-table #basicTable [nzData]="history">
         <thead>
         <tr>
           <th>Vidéo</th>
           <th>Date jouée</th>
           <th>Nombre de fois joué</th>
-          <th>Nombre de Temps joué</th>
+          <th>Nombre de Temps joué en secondes</th>
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let data of basicTable.data, index as i">
+        <tr *ngFor="let data of history, let id = index">
           <td>{{ data.file }}</td>
-          <td>{{ data.date }}</td>
+          <td>{{ data.endDate }}</td>
           <td>{{ data.nbOfPlay }}</td>
           <td>{{ data.totalTimePlay }}</td>
         </tr>
         </tbody>
-      </nz-table> -->
+      </nz-table>
   </div>
 </div>
 

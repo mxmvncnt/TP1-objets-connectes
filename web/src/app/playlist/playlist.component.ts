@@ -26,7 +26,7 @@ interface PlayList {
 })
 export class PlaylistComponent implements OnInit {
   playList: PlayList[]
-  // history: 
+  history = [{file: 'test.mp4', endDate: '2024-05-15', nbOfPlay: 2, totalTimePlay: 1500}]
   deviceId: number;
   
   fileList: NzUploadFile[] = []
@@ -86,6 +86,14 @@ export class PlaylistComponent implements OnInit {
         console.log(this.playList)
       });
   }
+
+  getHistoryData(){
+    this.dataService.getData(`/devices/${this.deviceId}/status`).subscribe(
+      (data) => {
+        c
+      }
+    )
+  } 
 
  handlePreview = async (file: NzUploadFile): Promise<void> => {
   if (!file.url && !file.preview) {
