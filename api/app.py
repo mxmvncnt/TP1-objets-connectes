@@ -39,9 +39,6 @@ def get_count_today():
 @app.post("/video/add")
 def add_video():
     data = request.form
-    print("VIDEO DATA FORM:::::::")
-    print(data)
-    print(request)
     return video.add_video(
         fichier=data.get("fichier"),
         taille=data.get("taille"),

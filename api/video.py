@@ -15,12 +15,6 @@ def get_by_id(video_id):
 
 
 def add_video(fichier, taille, md5, ordre):
-    if taille == None:
-        taille = 0
-
-    if ordre == None:
-        ordre = 1
-
     models.db.execute_sql(
         """
         INSERT INTO

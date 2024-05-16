@@ -4,6 +4,7 @@ import ca.qc.bdeb.tp1.controller.ApiError;
 import ca.qc.bdeb.tp1.data.entity.Device;
 import ca.qc.bdeb.tp1.data.entity.Playlist;
 import ca.qc.bdeb.tp1.data.entity.Video;
+import ca.qc.bdeb.tp1.data.entity.VideoWithPosition;
 import ca.qc.bdeb.tp1.data.repository.DeviceRepository;
 import ca.qc.bdeb.tp1.data.repository.PlaylistRepository;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,7 @@ public class PlaylistService {
         return playlistRepository.findAll();
     }
 
-    public List<Video> getPlaylist(int deviceId) {
+    public List<VideoWithPosition> getPlaylist(int deviceId) {
         return playlistRepository.getPlaylistByDeviceId(deviceId);
     }
 

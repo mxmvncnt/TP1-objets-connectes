@@ -76,7 +76,7 @@ def add_video_to_playlist(video: Video):
             "fichier": video.fichier,
             "taille": video.taille,
             "md5": video.md5,
-            "ordre": 1,
+            "ordre": video.ordre,
         },
     )
 
@@ -126,7 +126,7 @@ def get_local_videos() -> list[Video]:
     if not isinstance(videos_db_json, list):
         return []
 
-    return [Video(**data) for data in videos_db_json]
+    return get_video_objects_from_local_json(videos_db_json)
 
 
 def add_missing_videos():
@@ -160,7 +160,7 @@ def get_video_objects_from_server_json(json_data) -> list[Video]:
             id=video.get('id'),
             fichier=video.get('file'),
             taille=video.get('size'),
-            ordre=1,
+            ordre=video.get('position'),
             md5=video.get('md5')
         )
 

@@ -2,6 +2,7 @@ package ca.qc.bdeb.tp1.controller;
 
 import ca.qc.bdeb.tp1.data.entity.Device;
 import ca.qc.bdeb.tp1.data.entity.Video;
+import ca.qc.bdeb.tp1.data.entity.VideoWithPosition;
 import ca.qc.bdeb.tp1.service.DeviceService;
 import ca.qc.bdeb.tp1.service.PlaylistService;
 import ca.qc.bdeb.tp1.service.StorageService;
@@ -50,7 +51,7 @@ public class DeviceController {
     }
 
     @GetMapping("/devices/{deviceId}/playlist")
-    public List<Video> getPlaylist(
+    public List<VideoWithPosition> getPlaylist(
             @PathVariable int deviceId) {
         return playlistService.getPlaylist(deviceId);
     }
