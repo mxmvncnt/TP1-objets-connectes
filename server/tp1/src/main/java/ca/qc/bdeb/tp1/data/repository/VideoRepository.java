@@ -12,4 +12,6 @@ import java.util.List;
 public interface VideoRepository extends JpaRepository<Video, Integer>{
     boolean existsByFileAndSizeAndMd5(String file, int size, String md5);
     Video findByFileAndMd5(String file, String md5);
+    List<Video> findAllByMd5In(List<String> md5);
+    List<Video> findAllByFileIn(List<String> file);
 }

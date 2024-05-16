@@ -1,17 +1,21 @@
+import hashlib
 import json
 import os
+from datetime import datetime
+from typing import List, Dict, Any
 
 import settings as s
 
 import requests
 
+from client.history_entry import HistoryEntry
 from client.video import Video
 
 headers = {'Content-type': 'application/json'}
 
 
 # get unsaved watch history
-def get_local_watch_data():
+def get_local_watch_data() -> list[HistoryEntry]:
     print("Getting local watch data...")
     unsaved_videos = requests.get(url=f"{os.getenv('API_URL')}/lecture/unsaved")
     unsaved_videos_json = json.loads(unsaved_videos.content)
@@ -24,14 +28,14 @@ def get_local_watch_data():
     except:
         print("Unsaved data found.")
 
-    return unsaved_videos_json
+    return get_history_objects_from_local_json(unsaved_videos_json)
 
 
-def save_local_watch_data(is_playing: bool, unsaved_videos_json):
+def save_local_watch_data(is_playing: bool, unsaved_history):
     print("Sending unsaved videos...")
     save_request = requests.post(
         url=f"{os.getenv('SERVER_URL')}/devices/{s.DEVICE_ID}/status",
-        data=json.dumps({"is_playing": is_playing, "videos": unsaved_videos_json}),
+        data=json.dumps({"is_playing": is_playing, "videos": unsaved_history}),
         headers=headers
     )
 
@@ -50,8 +54,7 @@ def delete_local_watch_data():
     )
 
 
-def download_video(video: Video):
-    print(video)
+def download_video(video: Video) -> bool:
     print(f"Downloading: {video.fichier}")
 
     missing_video = requests.get(
@@ -62,10 +65,23 @@ def download_video(video: Video):
     filename = missing_video.headers.get("Content-Disposition").split("attachment; filename=")[1]
     missing_video = missing_video.content
 
+    hash_md5 = hashlib.md5()
+
     print(f"Writing to file: {video.fichier}")
-    f = open(f"{os.path.dirname(os.path.realpath(__file__))}/videos/{filename}", "wb")
-    f.write(missing_video)
-    f.close()
+    path = f"{os.path.dirname(os.path.realpath(__file__))}/videos/{filename}"
+    with open(path, "wb") as f:
+        f.write(missing_video)
+        print("Calculating MD5...")
+        hash_md5.update(missing_video)
+
+    md5_hash = hash_md5.hexdigest()
+
+    if md5_hash != video.md5:
+        print("The MD5 does not match. Deleting file...")
+        os.remove(path)
+        return False
+
+    return True
 
 
 def add_video_to_playlist(video: Video):
@@ -136,9 +152,10 @@ def add_missing_videos():
     missing_videos = get_missing_videos(server_videos, local_videos)
 
     for missing_video in missing_videos:
-        download_video(missing_video)
-        add_video_to_playlist(missing_video)
-        print("Done.")
+        download_success = download_video(missing_video)
+        if download_success:
+            add_video_to_playlist(missing_video)
+            print("Done.")
 
 
 def remove_incorrect_videos():
@@ -184,3 +201,39 @@ def get_video_objects_from_local_json(json_data) -> list[Video]:
         videos_objets.append(new_video)
 
     return videos_objets
+
+
+def get_history_objects_from_local_json(json_data) -> list[HistoryEntry]:
+    history_objects = []
+
+    for history in json_data:
+        video: Video = get_video_from_id(history.get('video_id'))
+        new_video = HistoryEntry(
+            id=history.get('id'),
+            video=video,
+            start=history.get('debut'),
+            end=history.get('fin')
+        )
+
+        history_objects.append(new_video)
+
+    return history_objects
+
+
+def get_history_json_from_objects(history: list[HistoryEntry]) -> list[dict[str, Any]]:
+    history_objects = []
+
+    for entry in history:
+        history_objects.append({
+            "md5": entry.video.md5,
+            "start": datetime.strptime(entry.start, "%a, %d %b %Y %H:%M:%S %Z").strftime('%Y-%m-%d %H:%M:%S'),
+            "end": datetime.strptime(entry.end, "%a, %d %b %Y %H:%M:%S %Z").strftime('%Y-%m-%d %H:%M:%S')
+        })
+
+    return history_objects
+
+
+def get_video_from_id(video_id: int) -> Video:
+    video = requests.get(f"{os.getenv('API_URL')}/video/{video_id}")
+    video_db_json = video.json()
+    return get_video_objects_from_local_json(video_db_json)[0]

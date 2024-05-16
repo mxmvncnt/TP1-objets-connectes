@@ -36,6 +36,10 @@ public class DeviceService {
         return videoRepository.findAllById(videoIds);
     }
 
+    public List<Video> getVideosFromMd5(List<String> md5s) {
+        return videoRepository.findAllByMd5In(md5s);
+    }
+
     public void updateDeviceName(int deviceId, String newName) { deviceRepository.updateDeviceName(deviceId, newName); }
 
     public void updateDeviceLocation(int deviceId, String newLocation) { deviceRepository.updateDeviceLocation(deviceId, newLocation); }
