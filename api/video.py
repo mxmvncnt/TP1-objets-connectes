@@ -11,7 +11,6 @@ def get_list():
 
 def get_by_id(video_id):
     video = Video.select().where(Video.id == video_id).first()
-    print(video)
     return to_json([video])
 
 
@@ -35,7 +34,6 @@ def remove_video(video_id):
 
 
 def replace_all(videos_json: List[Video]):
-    print(videos_json)
     videos = [Video(**data) for data in videos_json]
     for video in videos:
         add_video(video.fichier, video.taille, video.md5, video.ordre)

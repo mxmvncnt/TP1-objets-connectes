@@ -72,10 +72,6 @@ def add_historique():
 def add_lecture():
     data = request.form
 
-    print("===")
-    print(data)
-    print("===")
-
     return lecture.add_entry(
         video_id=int(data.get("video_id")),
         debut=int(data.get("debut")),
