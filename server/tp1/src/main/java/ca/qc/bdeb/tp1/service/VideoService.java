@@ -1,7 +1,9 @@
 package ca.qc.bdeb.tp1.service;
 
+import ca.qc.bdeb.tp1.data.entity.Device;
 import ca.qc.bdeb.tp1.data.entity.History;
 import ca.qc.bdeb.tp1.data.entity.Video;
+import ca.qc.bdeb.tp1.data.repository.DeviceRepository;
 import ca.qc.bdeb.tp1.data.repository.HistoryRepository;
 import ca.qc.bdeb.tp1.data.repository.VideoRepository;
 import jakarta.transaction.Transactional;
@@ -19,11 +21,13 @@ public class VideoService {
     private final VideoRepository videoRepository;
     private final HistoryRepository historyRepository;
     private final Repositories repositories;
+    private final DeviceRepository deviceRepository;
 
-    public VideoService(VideoRepository repository, HistoryRepository historyRepository, Repositories repositories) {
+    public VideoService(VideoRepository repository, HistoryRepository historyRepository, Repositories repositories, DeviceRepository deviceRepository) {
         this.videoRepository = repository;
         this.historyRepository = historyRepository;
         this.repositories = repositories;
+        this.deviceRepository = deviceRepository;
     }
 
     public Video addVideo(Video video) {
@@ -47,18 +51,18 @@ public class VideoService {
         return videoRepository.findAll();
     }
 
-    public void addHistoryEntries(List<Map<String, Object>> historyMap, List<Video> videos) throws ParseException {
+    public void addHistoryEntries(List<Map<String, Object>> historyMap, List<Video> videos, Integer deviceId) throws ParseException {
         List<History> historyList = new ArrayList<>();
 
         for (int i = 0; i < videos.size(); i++) {
-
-
             SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             History history = new History();
             Date start = date.parse(String.valueOf(historyMap.get(i).get("start")));
             Date end = date.parse(String.valueOf(historyMap.get(i).get("end")));
+            Device device = deviceRepository.findById(deviceId).get();
 
             history.setVideo(videos.get(i));
+            history.setDevice(device);
             history.setStart(start);
             history.setEnd(end);
 

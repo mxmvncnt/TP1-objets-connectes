@@ -117,7 +117,7 @@ public class DeviceController {
         List<Map<String, Object>> videosMap = (List<Map<String, Object>>) body.get("videos");
         List<Video> videos = deviceService.getVideosFromId(videosMap.stream().filter(video -> video.get("id") != null).map(video -> (Integer) video.get("id")).toList());
 
-        videoService.addHistoryEntries(videosMap, videos);
+        videoService.addHistoryEntries(videosMap, videos, deviceId);
 
         Device device = deviceService.getDeviceFromId(deviceId);
 
